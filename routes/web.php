@@ -9,7 +9,14 @@ use App\Http\Controllers\MidtransController;
 use Illuminate\Support\Facades\Route;
 
 // Halaman Utama
-Route::get('/', function () { return view('welcome'); })->name('home');
+Route::get('/', function () {
+    return view('welcome');
+})->name('home');
+
+// Verify
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
 // Event
 Route::get('/events', [EventController::class, 'index'])->name('events.index');
@@ -40,4 +47,4 @@ Route::middleware('auth')->group(function () {
 Route::post('/midtrans/notification', [MidtransController::class, 'notificationHandler'])->name('midtrans.notification');
 
 // Rute Autentikasi Breeze
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
