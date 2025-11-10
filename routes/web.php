@@ -41,7 +41,6 @@ require __DIR__ . '/auth.php';
 */
 Route::middleware(['auth', 'verified'])->group(function () {
 
-    // Rute Dashboard (Breeze)
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
@@ -52,17 +51,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Order (Form & Proses)
-    Route::get('/events/{event}/order', [OrderController::class, 'create'])->name('orders.create');
-    Route::post('/events/{event}/order', [OrderController::class, 'store'])->name('orders.store');
+    Route::get('/events/{event}/checkout', [OrderController::class, 'create'])->name('orders.create');
+    Route::post('/events/{event}/checkout-process', [OrderController::class, 'store'])->name('orders.store');
 
     // Pembayaran
-    Route::get('/orders/{order}/payment', [PaymentController::class, 'show'])->name('orders.payment');
+    Route::get('/my-checkout/{order}/pay', [PaymentController::class, 'show'])->name('orders.payment');
 
     // Tiket Saya
-    Route::get('/my-tickets', [TicketController::class, 'index'])->name('my-tickets.index');
-    Route::get('/tickets/{order}/view', [TicketController::class, 'show'])->name('tickets.show');
-    Route::get('/tickets/{order}/download', [TicketController::class, 'download'])->name('tickets.download');
-    Route::delete('/tickets/{order}/cancel', [TicketController::class, 'cancel'])->name('tickets.cancel');
+    Route::get('/my-receipts', [TicketController::class, 'index'])->name('my-tickets.index');
+    Route::get('/my-receipts/{order}/show', [TicketController::class, 'show'])->name('tickets.show');
+    Route::get('/my-receipts/{order}/get', [TicketController::class, 'download'])->name('tickets.download');
+    Route::delete('/my-receipts/{order}/remove', [TicketController::class, 'cancel'])->name('tickets.cancel');
 });
 
 /*
