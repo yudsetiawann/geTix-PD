@@ -39,7 +39,7 @@ require __DIR__ . '/auth.php';
 | Jika belum verifikasi, user akan otomatis diarahkan ke halaman 'verify-email'.
 |
 */
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth'])->group(function () {
 
     // Rute Dashboard (Breeze)
     Route::get('/dashboard', function () {
@@ -57,14 +57,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Pembayaran
     Route::get('/orders/{order}/payment', [PaymentController::class, 'show'])->name('orders.payment');
+});
 
+Route::middleware(['auth', 'verified'])->group(function () {
     // Tiket Saya
     Route::get('/my-tickets', [TicketController::class, 'index'])->name('my-tickets.index');
     Route::get('/tickets/{order}/view', [TicketController::class, 'show'])->name('tickets.show');
     Route::get('/tickets/{order}/download', [TicketController::class, 'download'])->name('tickets.download');
     Route::delete('/tickets/{order}/cancel', [TicketController::class, 'cancel'])->name('tickets.cancel');
 });
-
 /*
 |--------------------------------------------------------------------------
 | Rute Webhook (Publik & Tanpa CSRF)
