@@ -39,9 +39,6 @@ class OrderController extends Controller
             'level' => 'required|string',
         ];
 
-        // --- PERBAIKAN 3: Ambil Event secara manual DARI REQUEST ---
-        $event = Event::findOrFail($request->input('event_id'));
-
         // 2. Tambahkan aturan validasi kondisional (hanya untuk pertandingan)
         $dynamicRules = [];
         if ($event->event_type === 'pertandingan') {

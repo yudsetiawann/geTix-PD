@@ -52,9 +52,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Order (Form & Proses)
     Route::get('/events/{event}/checkout', [OrderController::class, 'create'])->name('orders.create');
-    // Route::post('/events/{event}/checkout-process', [OrderController::class, 'store'])->name('orders.store');
-    // Rute "kamuflase" yang terlihat membosankan bagi firewall
-    Route::post('/kirim-data-order', [OrderController::class, 'store'])->name('orders.store');
+    Route::post('/events/{event}/checkout-process', [OrderController::class, 'store'])->name('orders.store');
 
     // Pembayaran
     Route::get('/my-checkout/{order}/pay', [PaymentController::class, 'show'])->name('orders.payment');
