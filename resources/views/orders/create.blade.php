@@ -11,23 +11,23 @@
       basePrice: {{ $event->ticket_price ?? 0 }},
       levelPrices: {{ json_encode($levelPrices) ?? '{}' }},
       hasDynamicPricing: {{ $hasDynamicPricing ? 'true' : 'false' }},
-
+  
       // Input state
       selectedLevel: '{{ old('level', '') }}', // Untuk Ujian
       selectedCompetitionLevel: '{{ old('competition_level', '') }}', // Untuk Pertandingan (Usia Dini, dll)
       selectedCategory: '{{ old('category', '') }}', // Untuk Pertandingan (Tanding, TGR)
       quantity: 1, // Tetap 1
-
+  
       // Hasil Kalkulasi
       calculatedPrice: 0,
-
+  
       // Hitung harga berdasarkan tipe event dan input yang relevan
       calculatePrice() {
           if (!this.hasDynamicPricing) {
               this.calculatedPrice = this.basePrice;
               return;
           }
-
+  
           let price = 0;
           if (this.eventType === 'ujian' && this.selectedLevel) {
               // Logika harga ujian (sabuk)
@@ -67,6 +67,7 @@
       <form action="{{ route('orders.store', $event) }}" method="POST"
         class="space-y-6 rounded-lg bg-white p-6 shadow-sm dark:bg-gray-800">
         @csrf
+        <input type="hidden" name="event_id" value="{{ $event->id }}">
 
         {{-- Ringkasan Event --}}
         <div class="border-b pb-4 dark:border-gray-700">
