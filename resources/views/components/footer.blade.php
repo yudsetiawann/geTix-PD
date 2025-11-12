@@ -8,7 +8,7 @@
             <div class="flex items-center space-x-3 mb-4">
               <!-- Ganti dengan Logo Anda -->
               <x-application-logo class="h-8 w-10" />
-              <span class="text-xl font-semibold text-gray-700 dark:text-white">E-Tick PD</span>
+              <span class="text-xl font-semibold text-gray-700 dark:text-white">geTix PD</span>
             </div>
             <p class="text-gray-600 dark:text-gray-400 text-sm max-w-xs">
               Platform e-ticketing resmi untuk semua kegiatan Keluarga Silat Nasional Indonesia Perisai Diri. Dapatkan
@@ -83,7 +83,7 @@
         <!-- Garis Pemisah dan Copyright -->
         <div class="mt-8 -mb-5 border-t border-slate-400 dark:border-slate-700 pt-6 text-center">
           <p class="text-sm text-gray-600 dark:text-gray-500">
-            &copy; 2025 E-Ticketing App (E-Tick PD). All rights reserved.
+            &copy; 2025 E-Ticketing App (geTix PD). All rights reserved.
           </p>
         </div>
       </div>
