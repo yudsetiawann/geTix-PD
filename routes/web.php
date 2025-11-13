@@ -45,7 +45,7 @@ require __DIR__ . '/auth.php';
 | Jika belum verifikasi, user akan otomatis diarahkan ke halaman 'verify-email'.
 |
 */
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['verified'])->group(function () {
 
     Route::get('/dashboard', function () {
         return view('dashboard');
