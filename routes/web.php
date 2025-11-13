@@ -6,6 +6,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\MidtransController;
+use App\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,6 +14,11 @@ use Illuminate\Support\Facades\Route;
 | Rute Publik (Bisa diakses Guest & User Belum Terverifikasi)
 |--------------------------------------------------------------------------
 */
+
+// Rute Tes Laravel Polos
+Route::post('/test-laravel-post', function () {
+    return 'Laravel Berhasil Menerima POST!';
+})->withoutMiddleware([VerifyCsrfToken::class]); // Matikan CSRF khusus rute ini
 
 Route::get('/', function () {
     return view('welcome');
