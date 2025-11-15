@@ -53,7 +53,7 @@
     <x-navbar />
 
     @isset($header)
-      <header class="pt-14 bg-white text-center dark:bg-gray-800 shadow">
+      <header class="pt-16 bg-white text-center dark:bg-gray-800 shadow">
         <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
           {{ $header }}
         </div>

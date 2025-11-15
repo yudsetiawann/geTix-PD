@@ -3,13 +3,22 @@
 namespace App\Providers\Filament;
 
 use Filament\Panel;
+use App\Models\User;
 use Filament\PanelProvider;
 use Filament\Pages\Dashboard;
 use Filament\Support\Colors\Color;
+use Illuminate\Support\HtmlString;
 use Filament\Widgets\AccountWidget;
+use Illuminate\Support\Facades\Auth;
+use Filament\Navigation\NavigationItem;
 use Filament\Widgets\FilamentInfoWidget;
 use Filament\Http\Middleware\Authenticate;
+
+// --- TAMBAHKAN USE STATEMENT UNTUK WIDGET BARU ---
 use App\Filament\Widgets\SalesStatsOverview;
+use App\Filament\Widgets\SalesChart;
+use App\Filament\Widgets\EventSalesTable;
+
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -19,7 +28,6 @@ use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
-use Illuminate\Support\HtmlString;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -30,7 +38,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->viteTheme('resources/css/filament/admin/theme.css')
-            ->login()
+            // ->login()
             ->brandLogo(new HtmlString(view('filament.app-logo')->render()))
             ->brandName('E-Tick PD')
             ->favicon(asset('img/Icon-PD.png'))
@@ -48,6 +56,14 @@ class AdminPanelProvider extends PanelProvider
                 // AccountWidget::class,
                 // FilamentInfoWidget::class,
                 SalesStatsOverview::class,
+                EventSalesTable::class,
+            ])
+            ->navigationItems([
+                NavigationItem::make('Halaman User')
+                    ->url(fn() => route('home'))
+                    ->icon('heroicon-o-arrow-uturn-left')
+                    ->group('Navigasi')
+                    ->sort(1),
             ])
             ->middleware([
                 EncryptCookies::class,

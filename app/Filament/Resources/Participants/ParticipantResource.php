@@ -2,18 +2,19 @@
 
 namespace App\Filament\Resources\Participants;
 
-use App\Filament\Resources\Participants\Pages\CreateParticipant;
+use UnitEnum;
+use BackedEnum;
+use Filament\Tables\Table;
+use App\Models\Participant;
+use Filament\Schemas\Schema;
+use Filament\Resources\Resource;
+use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Facades\Auth;
 use App\Filament\Resources\Participants\Pages\EditParticipant;
 use App\Filament\Resources\Participants\Pages\ListParticipants;
+use App\Filament\Resources\Participants\Pages\CreateParticipant;
 use App\Filament\Resources\Participants\Schemas\ParticipantForm;
 use App\Filament\Resources\Participants\Tables\ParticipantsTable;
-use App\Models\Participant;
-use BackedEnum;
-use UnitEnum;
-use Filament\Resources\Resource;
-use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Table;
 
 class ParticipantResource extends Resource
 {
@@ -47,5 +48,11 @@ class ParticipantResource extends Resource
             'create' => CreateParticipant::route('/create'),
             'edit' => EditParticipant::route('/{record}/edit'),
         ];
+    }
+
+    public static function canViewAny(): bool
+    {
+        // Hanya izinkan jika user adalah admin
+        return Auth::user()->isAdmin();
     }
 }

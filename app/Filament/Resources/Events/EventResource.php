@@ -8,6 +8,7 @@ use Filament\Tables\Table;
 use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Facades\Auth;
 use App\Filament\Resources\Events\Pages\EditEvent;
 use App\Filament\Resources\Events\Pages\ListEvents;
 use App\Filament\Resources\Events\Pages\CreateEvent;
@@ -48,5 +49,11 @@ class EventResource extends Resource
             'create' => CreateEvent::route('/create'),
             'edit' => EditEvent::route('/{record}/edit'),
         ];
+    }
+
+    public static function canViewAny(): bool
+    {
+        // Hanya izinkan jika user adalah admin
+        return Auth::user()->isAdmin();
     }
 }

@@ -1,27 +1,63 @@
-<nav x-data="{ mobileOpen: false }"
-  class="fixed top-0 left-0 w-full z-50 transition-all duration-300 bg-gray-600/50 dark:bg-gray-800/50">
+{{--
+  Redesain Navigasi Modern (Glassmorphism)
+  - Menggunakan Tailwind CSS & Alpine.js
+  - Tetap kompatibel dengan Laravel Blade
+  - Efek "glossy" saat di-scroll
+  - Menu mobile slide-out yang modern
+--}}
+<nav x-data="{
+    mobileOpen: false,
+    scrolled: false,
+    darkMode: localStorage.getItem('darkMode') === 'true' || (!('darkMode' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches),
+    init() {
+        if (this.darkMode) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+            document.documentElement.removeAttribute('data-theme');
+        }
+        this.$watch('darkMode', val => {
+            localStorage.setItem('darkMode', val);
+            if (val) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            } else {
+                document.documentElement.removeAttribute('data-theme');
+            }
+        });
+    }
+}" x-init="init()" class="fixed top-0 left-0 w-full z-50 transition-all duration-300"
+  :class="{
+      'bg-white/90 dark:bg-slate-900/90 shadow-lg backdrop-blur-lg': scrolled,
+      'bg-white/70 dark:bg-slate-900/70 backdrop-blur-lg border-b border-white/20 dark:border-slate-800/30': !scrolled
+  }">
 
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-    <div class="flex h-16 items-center justify-between">
-      {{-- Logo --}}
+    <div class="flex h-18 items-center justify-between">
+
+      <!-- Logo & Navigasi Kiri -->
       <div class="flex items-center">
-        <a href="/" class="flex items-center shrink-0">
-          <img src="/img/Logo-PD.png" alt="geTix PD" class="h-10 w-12" />
-          <span class="text-md font-semibold text-gray-100 dark:text-gray-200">geTix PD</span>
+        <a href="/" class="flex items-center shrink-0 space-x-2.5 group">
+          <img src="/img/Logo-PD.png" alt="geTix PD"
+            class="h-10 w-auto transition-transform duration-300 group-hover:scale-110" />
+          <span
+            class="text-lg font-semibold text-slate-800 dark:text-slate-100 transition-colors group-hover:text-blue-600 dark:group-hover:text-blue-400">
+            geTix PD
+          </span>
         </a>
-        <div class="hidden md:block">
-          <div class="ml-8 flex items-baseline space-x-4">
+
+        <!-- Menu Desktop -->
+        <div class="hidden md:ml-10 md:block">
+          <div class="flex items-baseline space-x-4">
             <a href="{{ route('home') }}"
-              class="{{ request()->routeIs('home') ? 'bg-gray-900/50 text-white' : 'text-gray-100 dark:text-gray-300 hover:bg-gray-600/50 dark:hover:bg-white/5 hover:text-white' }} rounded-md px-3 py-2 text-sm font-medium">
+              class="{{ request()->routeIs('home') ? 'text-blue-600 dark:text-blue-400 font-medium' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white' }} rounded-lg px-3 py-2 text-sm transition-colors duration-200">
               Beranda
             </a>
             <a href="{{ route('events.index') }}"
-              class="{{ request()->routeIs('events.index') ? 'bg-gray-900/50 text-white' : 'text-gray-100 dark:text-gray-300 hover:bg-gray-600/50 dark:hover:bg-white/5 hover:text-white' }} rounded-md px-3 py-2 text-sm font-medium">
+              class="{{ request()->routeIs('events.index') ? 'text-blue-600 dark:text-blue-400 font-medium' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white' }} rounded-lg px-3 py-2 text-sm transition-colors duration-200">
               Events
             </a>
             @auth
               <a href="{{ route('my-tickets.index') }}"
-                class="{{ request()->routeIs('my-tickets.index') ? 'bg-gray-900/50 text-white' : 'text-gray-100 dark:text-gray-300 hover:bg-gray-600/50 dark:hover:bg-white/5 hover:text-white' }} rounded-md px-3 py-2 text-sm font-medium">
+                class="{{ request()->routeIs('my-tickets.index') ? 'text-blue-600 dark:text-blue-400 font-medium' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white' }} rounded-lg px-3 py-2 text-sm transition-colors duration-200">
                 Tiket Saya
               </a>
             @endauth
@@ -29,174 +65,263 @@
         </div>
       </div>
 
-      {{-- User Menu Desktop --}}
-      <div class="hidden md:block">
-        <div class="ml-4 flex items-center md:ml-6">
+      <!-- Menu Kanan (Desktop) -->
+      <div class="hidden md:flex md:items-center md:space-x-2">
 
-          {{-- === TOMBOL DARK MODE === --}}
-          <button @click="darkMode = !darkMode" type="button"
-            class="relative flex items-center w-full rounded-md p-1 text-gray-100 dark:text-gray-300 hover:bg-white/5 mr-3">
-            <span class="sr-only">Toggle dark mode</span>
-            {{-- Ikon Bulan (tampil saat light mode) --}}
-            <svg x-cloak x-show="!darkMode" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-              stroke-width="2" stroke="currentColor" class="size-5">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
-            </svg>
-            {{-- Ikon Matahari (tampil saat dark mode) --}}
-            <svg x-cloak x-show="darkMode" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-              stroke-width="2" stroke="currentColor" class="size-5">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
-            </svg>
-          </button>
-          {{-- === AKHIR TOMBOL DARK MODE === --}}
-
-          @auth
-            <div class="relative" x-data="{ open: false }">
-              <button @click="open = !open" class="relative flex max-w-xs items-center rounded-full focus:outline-none">
-                <span class="sr-only">Open user menu</span>
-                <span
-                  class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-600 ring-1 ring-white/10">
-                  <span class="text-sm font-medium leading-none text-white">
-                    {{ strtoupper(substr(Auth::user()->display_name, 0, 1)) }}
-                  </span>
-                </span>
-                <div class="ml-3 flex items-center">
-                  <div
-                    class="text-gray-100 dark:text-gray-300 text-sm font-medium transform transition duration-200 group-hover:scale-105 group-hover:text-white">
-                    {{ Auth::user()->display_name }}
-                  </div>
-                  <svg
-                    class="ms-2 size-5 text-gray-100 dark:text-gray-300 transform transition duration-200 group-hover:rotate-180 group-hover:text-white"
-                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd"
-                      d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                      clip-rule="evenodd" />
-                  </svg>
-                </div>
-              </button>
-
-              {{-- Dropdown --}}
-              <div x-cloak x-show="open" @click.outside="open = false" x-transition
-                class="absolute right-0 z-50 mt-2 w-48 origin-top-right rounded-md bg-white dark:bg-gray-800 py-1 ring-1 ring-white/10 shadow-lg focus:outline-none">
-                <a href="{{ route('profile.edit') }}"
-                  class="block px-4 py-2 text-sm text-gray-800 dark:text-white hover:bg-gray-500/5 dark:hover:bg-white/5">Profil
-                  Saya</a>
-                <form method="POST" action="{{ route('logout') }}">
-                  @csrf
-                  <button type="submit"
-                    class="block w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-gray-500/5 dark:hover:bg-white/5">
-                    Keluar
-                  </button>
-                </form>
-              </div>
-            </div>
-          @else
-            <a href="{{ route('login') }}"
-              class="inline-block bg-blue-600 hover:bg-blue-700 text-gray-100 py-2 px-4 rounded-lg font-bold text-sm shadow-lg hover:scale-105 transition duration-200">Masuk</a>
-            <a href="{{ route('register') }}"
-              class="ml-4 inline-block bg-yellow-500 hover:bg-yellow-600 text-gray-100 py-2 px-4 rounded-lg font-bold text-sm shadow-lg hover:scale-105 transition duration-200">Daftar</a>
-          @endauth
-        </div>
-      </div>
-
-      {{-- Tombol Menu Mobile --}}
-      <div class="-mr-2 flex md:hidden">
-        {{-- === TOMBOL DARK MODE MOBILE === --}}
+        <!-- Tombol Dark Mode -->
         <button @click="darkMode = !darkMode" type="button"
-          class="flex items-center w-full rounded-md px-2 py-2 text-base font-medium text-gray-100 dark:text-gray-300 hover:bg-white/5 transition">
+          class="relative flex items-center rounded-full p-2 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-200">
           <span class="sr-only">Toggle dark mode</span>
-          <svg x-show="!darkMode" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
-            stroke="currentColor" class="size-5">
+          <svg x-cloak x-show="!darkMode" class="size-5" xmlns="http://www.w3.org/2000/svg" fill="none"
+            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round"
               d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
           </svg>
-          <svg x-show="darkMode" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
-            stroke="currentColor" class="size-5">
+          <svg x-cloak x-show="darkMode" class="size-5" xmlns="http://www.w3.org/2000/svg" fill="none"
+            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round"
               d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
           </svg>
         </button>
-        {{-- === AKHIR TOMBOL DARK MODE MOBILE === --}}
+
+        @auth
+          <!-- Dropdown User -->
+          <div class="relative" x-data="{ open: false }">
+            <button @click="open = !open"
+              class="flex items-center space-x-2 rounded-full p-1 pr-3 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-200">
+              <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-white">
+                <span class="text-sm font-medium leading-none">
+                  {{ strtoupper(substr(Auth::user()->display_name, 0, 1)) }}
+                </span>
+              </span>
+              <span class="text-sm font-medium text-slate-700 dark:text-slate-200">
+                {{ Auth::user()->display_name }}
+              </span>
+              <svg class="size-4 text-slate-500 dark:text-slate-400 transition-transform duration-200"
+                :class="{ 'rotate-180': open }" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                fill="currentColor">
+                <path fill-rule="evenodd"
+                  d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                  clip-rule="evenodd" />
+              </svg>
+            </button>
+
+            <!-- Panel Dropdown -->
+            <div x-cloak x-show="open" @click.outside="open = false" x-transition
+              class="absolute right-0 z-50 mt-2 w-56 origin-top-right rounded-xl bg-white dark:bg-slate-800 py-1.5 shadow-lg ring-1 ring-black/5 dark:ring-white/10 focus:outline-none">
+
+              {{-- === LINK UNTUK ADMIN / SCANNER === --}}
+              @if (Auth::user()->isAdmin())
+                <a href="{{ route('filament.admin.pages.dashboard') }}"
+                  class="block px-4 py-2 text-sm font-semibold text-yellow-600 dark:text-yellow-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                  Panel Admin
+                </a>
+              @elseif (Auth::user()->isScanner())
+                <a href="{{ route('filament.admin.pages.scan-ticket') }}"
+                  class="block px-4 py-2 text-sm font-semibold text-yellow-600 dark:text-yellow-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                  Panel Scanner
+                </a>
+              @endif
+
+              {{-- Tampilkan separator HANYA JIKA user adalah admin/scanner --}}
+              @if (Auth::user()->isAdmin() || Auth::user()->isScanner())
+                <div class="my-1.5 h-px bg-slate-200 dark:bg-slate-700"></div>
+              @endif
+              {{-- === AKHIR LINK ADMIN / SCANNER === --}}
+
+
+              <!-- Nav Links -->
+              <a href="{{ route('home') }}"
+                class="{{ request()->routeIs('home') ? 'text-blue-600 dark:text-blue-400' : 'text-slate-700 dark:text-slate-200' }} block px-4 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                Beranda
+              </a>
+              <a href="{{ route('events.index') }}"
+                class="{{ request()->routeIs('events.index') ? 'text-blue-600 dark:text-blue-400' : 'text-slate-700 dark:text-slate-200' }} block px-4 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                Events
+              </a>
+              <a href="{{ route('my-tickets.index') }}"
+                class="{{ request()->routeIs('my-tickets.index') ? 'text-blue-600 dark:text-blue-400' : 'text-slate-700 dark:text-slate-200' }} block px-4 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                Tiket Saya
+              </a>
+
+              <!-- Separator -->
+              <div class="my-1.5 h-px bg-slate-200 dark:bg-slate-700"></div>
+
+              <!-- User Links -->
+              <a href="{{ route('profile.edit') }}"
+                class="block px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                Profil Saya
+              </a>
+              <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit"
+                  class="block w-full text-left px-4 py-2 text-sm text-red-500 dark:text-red-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                  Keluar
+                </button>
+              </form>
+            </div>
+          </div>
+        @else
+          <!-- Tombol Guest -->
+          <a href="{{ route('login') }}"
+            class="hidden lg:inline-block rounded-lg px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors duration-200">
+            Masuk
+          </a>
+          <a href="{{ route('register') }}"
+            class="inline-block rounded-lg bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 text-sm font-medium transition-all duration-200 shadow-sm hover:shadow-md">
+            Daftar
+          </a>
+        @endauth
+      </div>
+
+      <!-- Tombol Menu Mobile -->
+      <div class="-mr-2 flex items-center md:hidden">
         <button @click="mobileOpen = !mobileOpen"
-          class="relative inline-flex items-center justify-center rounded-md p-2 text-gray-100 dark:text-gray-400 hover:bg-white/5 hover:text-white focus:outline-none">
+          class="relative inline-flex items-center justify-center rounded-md p-2 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
           <span class="sr-only">Open main menu</span>
-          <svg x-show="!mobileOpen" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-            stroke-width="1.5" stroke="currentColor" class="h-6 w-6">
+          <!-- Ikon Hamburger -->
+          <svg x-cloak x-show="!mobileOpen" class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none"
+            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
           </svg>
-          <svg x-show="mobileOpen" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-            stroke-width="1.5" stroke="currentColor" class="h-6 w-6">
+          <!-- Ikon Close (X) -->
+          <svg x-cloak x-show="mobileOpen" class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none"
+            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
       </div>
+
     </div>
   </div>
 
-  {{-- Menu Mobile --}}
-  <div x-show="mobileOpen" x-transition
-    class="md:hidden border-t border-white/10 bg-gray-450/80 dark:bg-gray-800/80 backdrop-blur-lg">
-    <div class="space-y-1 px-2 pt-2 pb-3 sm:px-3">
+  <!-- ====== Menu Mobile (Slide-out Panel) ====== -->
+
+  <!-- Backdrop Overlay -->
+  <div x-cloak x-show="mobileOpen" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
+    x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200"
+    x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" @click="mobileOpen = false"
+    class="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm md:hidden">
+  </div>
+
+  <!-- Panel Menu -->
+  <nav x-cloak x-show="mobileOpen" x-transition:enter="transition ease-out duration-300 transform"
+    x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0"
+    x-transition:leave="transition ease-in duration-200 transform" x-transition:leave-start="translate-x-0"
+    x-transition:leave-end="translate-x-full"
+    class="fixed top-0 right-0 h-full w-full max-w-xs z-50 bg-white dark:bg-slate-900 shadow-xl md:hidden flex flex-col">
+
+    <!-- Header Panel -->
+    <div class="flex items-center justify-between p-4 border-b dark:border-slate-700/50">
+      <a href="/" class="flex items-center shrink-0 space-x-2.5">
+        <img src="/img/Logo-PD.png" alt="geTix PD" class="h-9 w-auto" />
+        <span class="text-base font-semibold text-slate-800 dark:text-slate-100">geTix PD</span>
+      </a>
+      <button @click="mobileOpen = false"
+        class="relative inline-flex items-center justify-center rounded-md p-2 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+        <span class="sr-only">Close menu</span>
+        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+          stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Konten Panel (Navigasi) -->
+    <div class="flex-1 overflow-y-auto p-4 space-y-2">
       <a href="{{ route('home') }}"
-        class="{{ request()->routeIs('home') ? 'bg-gray-900/50 text-white' : 'text-gray-100 hover:bg-white/5 hover:text-white' }} block rounded-md px-3 py-2 text-base font-medium">
+        class="{{ request()->routeIs('home') ? 'bg-blue-50 dark:bg-slate-800 text-blue-600 dark:text-blue-400' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800' }} block rounded-lg px-3 py-2.5 text-base font-medium transition-colors">
         Beranda
       </a>
       <a href="{{ route('events.index') }}"
-        class="{{ request()->routeIs('events.index') ? 'bg-gray-900/50 text-white' : 'text-gray-100 hover:bg-white/5 hover:text-white' }} block rounded-md px-3 py-2 text-base font-medium">
+        class="{{ request()->routeIs('events.index') ? 'bg-blue-50 dark:bg-slate-800 text-blue-600 dark:text-blue-400' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800' }} block rounded-lg px-3 py-2.5 text-base font-medium transition-colors">
         Events
       </a>
       @auth
         <a href="{{ route('my-tickets.index') }}"
-          class="{{ request()->routeIs('my-tickets.index') ? 'bg-gray-900/50 text-white' : 'text-gray-100 hover:bg-white/5 hover:text-white' }} block rounded-md px-3 py-2 text-base font-medium">
+          class="{{ request()->routeIs('my-tickets.index') ? 'bg-blue-50 dark:bg-slate-800 text-blue-600 dark:text-blue-400' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800' }} block rounded-lg px-3 py-2.5 text-base font-medium transition-colors">
           Tiket Saya
         </a>
       @endauth
     </div>
 
-    <div class="border-t border-white/10 pt-4 pb-3">
+    <!-- Footer Panel (User/Guest & Dark Mode) -->
+    <div class="p-4 border-t dark:border-slate-700/50 space-y-4">
       @auth
-        <div class="flex items-center px-5 group">
-          {{-- Avatar bulat --}}
-          <div class="flex items-center">
-            <div class="shrink-0">
-              <span
-                class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-gray-600 ring-1 ring-white/10">
-                <span class="text-base font-medium leading-none text-white">
-                  {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                </span>
+        <!-- Info User -->
+        <div class="flex items-center space-x-3">
+          <div class="shrink-0">
+            <span
+              class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 text-white ring-1 ring-white/10">
+              <span class="text-base font-medium leading-none">
+                {{ strtoupper(substr(Auth::user()->display_name, 0, 1)) }}
               </span>
-            </div>
-            <div class="ml-3">
-              <div class="text-base font-medium text-white">{{ Auth::user()->name }}</div>
-              <div class="text-sm font-medium text-gray-300 dark:text-gray-400">{{ Auth::user()->email }}</div>
+            </span>
+          </div>
+          <div class="min-w-0 flex-1">
+            <div class="text-base font-medium text-slate-800 dark:text-white truncate">{{ Auth::user()->name }}</div>
+            <div class="text-sm font-medium text-slate-500 dark:text-gray-400 truncate">{{ Auth::user()->email }}
             </div>
           </div>
         </div>
 
-        <div class="mt-3 space-y-1 px-2">
+        {{-- === LINK UNTUK ADMIN / SCANNER (MOBILE) === --}}
+        @if (Auth::user()->isAdmin())
+          <a href="{{ route('filament.admin.pages.dashboard') }}"
+            class="block w-full text-center rounded-lg px-3 py-2.5 text-base font-medium text-yellow-600 dark:text-yellow-400 bg-yellow-50 dark:bg-yellow-900/30 hover:bg-yellow-100 dark:hover:bg-yellow-900/50 transition-colors">
+            Panel Admin
+          </a>
+        @elseif (Auth::user()->isScanner())
+          <a href="{{ route('filament.admin.pages.scan-ticket') }}"
+            class="block w-full text-center rounded-lg px-3 py-2.5 text-base font-medium text-yellow-600 dark:text-yellow-400 bg-yellow-50 dark:bg-yellow-900/30 hover:bg-yellow-100 dark:hover:bg-yellow-900/50 transition-colors">
+            Panel Scanner
+          </a>
+        @endif
+        {{-- === AKHIR LINK ADMIN / SCANNER (MOBILE) === --}}
+
+        <!-- Link User -->
+        <div class="space-y-2">
           <a href="{{ route('profile.edit') }}"
-            class="block rounded-md px-3 py-2 text-base font-medium text-gray-100 hover:bg-white/5 hover:text-white">
+            class="block w-full text-center rounded-lg px-3 py-2.5 text-base font-medium text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
             Profil Saya
           </a>
           <form method="POST" action="{{ route('logout') }}">
             @csrf
             <button type="submit"
-              class="block w-full text-left rounded-md px-3 py-2 text-base font-medium text-red-400 hover:bg-white/5 hover:text-white">
+              class="block w-full text-center rounded-lg px-3 py-2.5 text-base font-medium text-red-500 dark:text-red-400 bg-red-50 dark:bg-red-900/30 hover:bg-red-100 dark:hover:bg-red-900/50 transition-colors">
               Keluar
             </button>
           </form>
-
         </div>
       @else
-        <div class="space-y-1 px-2">
+        <!-- Tombol Guest -->
+        <div class="space-y-2">
           <a href="{{ route('login') }}"
-            class="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-white/5 hover:text-white">Masuk</a>
+            class="block w-full text-center rounded-lg bg-blue-600 hover:bg-blue-700 text-white py-2.5 px-4 text-base font-medium transition-all duration-200 shadow-sm hover:shadow-md">
+            Masuk
+          </a>
           <a href="{{ route('register') }}"
-            class="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-white/5 hover:text-white">Daftar</a>
+            class="block w-full text-center rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 py-2.5 px-4 text-base font-medium transition-colors duration-200">
+            Daftar
+          </a>
         </div>
       @endauth
+
+      <!-- Tombol Dark Mode Mobile -->
+      <button @click="darkMode = !darkMode" type="button"
+        class="w-full flex items-center justify-center space-x-2 rounded-lg py-2.5 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+        <svg x-cloak x-show="!darkMode" class="size-5" xmlns="http://www.w3.org/2000/svg" fill="none"
+          viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+        </svg>
+        <svg x-cloak x-show="darkMode" class="size-5" xmlns="http://www.w3.org/2000/svg" fill="none"
+          viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+        </svg>
+        <span x-text="darkMode ? 'Mode Terang' : 'Mode Gelap'"></span>
+      </button>
     </div>
-  </div>
+  </nav>
 </nav>
