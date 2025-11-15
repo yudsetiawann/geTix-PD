@@ -126,38 +126,50 @@
       const pendingMsg = document.getElementById('status-pending');
       const errorMsg = document.getElementById('status-error');
 
+      // Sembunyikan semua pesan notifikasi
+      successMsg.style.display = 'none';
+      pendingMsg.style.display = 'none';
+      errorMsg.style.display = 'none';
+
       payButton.addEventListener('click', function() {
+        // Tampilkan loading di tombol (opsional)
         payButton.disabled = true;
         payButton.textContent = 'Memproses...';
 
         window.snap.pay('{{ $order->midtrans_token }}', {
           onSuccess: function(result) {
-            // Tampilkan pesan sukses (meskipun hanya sekilas)
+            // Ganti alert dengan notifikasi modern
             paymentCard.style.display = 'none';
             successMsg.style.display = 'block';
             console.log('Success:', result);
-
-            // --- PERBAIKAN ---
-            // Hapus setTimeout dan redirect langsung
-            window.location.href = '{{ route('my-tickets.index') }}';
+            // Redirect setelah 3 detik
+            setTimeout(function() {
+              window.location.href = '{{ route('my-tickets.index') }}';
+            }, 3000);
           },
           onPending: function(result) {
+            // Ganti alert dengan notifikasi modern
             paymentCard.style.display = 'none';
             pendingMsg.style.display = 'block';
             console.log('Pending:', result);
-
-            // --- PERBAIKAN ---
-            // Hapus setTimeout dan redirect langsung
-            window.location.href = '{{ route('my-tickets.index') }}';
+            // Redirect setelah 3 detik
+            setTimeout(function() {
+              window.location.href = '{{ route('my-tickets.index') }}';
+            }, 3000);
           },
           onError: function(result) {
+            // Ganti alert dengan notifikasi modern
             paymentCard.style.display = 'none';
             errorMsg.style.display = 'block';
             console.log('Error:', result);
+            // Kembalikan tombol ke state semula jika user tidak redirect
+            // payButton.disabled = false;
+            // payButton.textContent = 'Bayar Sekarang';
 
-            // --- PERBAIKAN ---
-            // Hapus setTimeout dan redirect langsung
-            window.location.href = '{{ route('my-tickets.index') }}';
+            // Redirect ke my-tickets agar user bisa coba lagi nanti
+            setTimeout(function() {
+              window.location.href = '{{ route('my-tickets.index') }}';
+            }, 4000);
           },
           onClose: function() {
             // Jika user menutup pop-up Snap tanpa bayar
