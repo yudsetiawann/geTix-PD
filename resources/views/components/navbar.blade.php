@@ -1,9 +1,3 @@
-{{-- Redesain Navigasi Modern (Glassmorphism)
-- Menggunakan Tailwind CSS & Alpine.js
-- Tetap kompatibel dengan Laravel Blade
-- Efek "glossy" saat di-scroll
-- Menu mobile slide-out yang modern
---}}
 <nav x-data="{ mobileOpen: false, scrolled: false }" @scroll.window="scrolled = (window.scrollY > 10)"
   class="fixed top-0 left-0 w-full z-50 transition-all duration-300"
   :class="{

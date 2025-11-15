@@ -27,7 +27,6 @@
   {{-- ========================================= --}}
 
   @vite(['resources/css/app.css', 'resources/js/app.js'])
-  {{-- Hapus script CDN unpkg Alpine.js jika Anda sudah mengimpornya di app.js --}}
 </head>
 
 {{-- === 2. PINDAHKAN LOGIKA ALPINE KE BODY === --}}
