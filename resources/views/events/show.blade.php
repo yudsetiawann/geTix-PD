@@ -3,7 +3,8 @@
   {{-- Gambar Utama --}}
   @if ($event->hasMedia('thumbnails'))
     <div class="mt-18 rounded h-64 w-full bg-slate-200 dark:bg-slate-800 sm:h-80 lg:h-96">
-      <img src="{{ $event->getFirstMediaUrl('thumbnails') }}" alt="{{ $event->title }}" class="h-full w-full object-cover rounded-t-md">
+      <img src="{{ $event->getFirstMediaUrl('thumbnails') }}" alt="{{ $event->title }}"
+        class="h-full w-full object-cover rounded-t-md">
     </div>
   @endif
 
@@ -94,14 +95,25 @@
           @if ($event->hasMedia('gallery'))
             <div>
               <h2 class="text-xl font-semibold text-slate-900 dark:text-white">Galeri</h2>
-              <div class="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3">
-                @foreach ($event->getMedia('gallery') as $media)
-                  <div class="group relative overflow-hidden rounded-xl shadow-md">
-                    <img src="{{ $media->getUrl() }}" alt="Galeri Event"
-                      class="aspect-square w-full object-cover transition-transform duration-300 group-hover:scale-105">
-                  </div>
-                @endforeach
-              </div>
+
+              {{-- Siapkan array URL gambar untuk Alpine.js --}}
+              @php
+                $galleryImages = $event->getMedia('gallery')->map(fn($media) => $media->getUrl())->toArray();
+              @endphp
+
+              {{-- Bungkus dengan komponen lightbox --}}
+              <x-lightbox :images="$galleryImages">
+                <div class="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3">
+                  @foreach ($galleryImages as $index => $imageUrl)
+                    <div class="group relative overflow-hidden rounded-xl shadow-md">
+                      {{-- Tambahkan @click --}}
+                      <img @click="openLightbox({{ $index }})" src="{{ $imageUrl }}"
+                        alt="Galeri Event {{ $index + 1 }}"
+                        class="aspect-square w-full object-cover transition-transform duration-300 group-hover:scale-105 cursor-pointer">
+                    </div>
+                  @endforeach
+                </div>
+              </x-lightbox>
             </div>
           @endif
 
