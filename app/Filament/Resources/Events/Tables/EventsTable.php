@@ -17,7 +17,7 @@ class EventsTable
             ->columns([
                 TextColumn::make('title')->searchable()->sortable(),
                 TextColumn::make('location')->searchable(),
-                TextColumn::make('ticket_price')->money('IDR')->sortable(),
+                // TextColumn::make('ticket_price')->money('IDR')->sortable(),
                 TextColumn::make('starts_at')->dateTime('d M Y')->sortable()->label('Mulai'),
                 TextColumn::make('ends_at')->dateTime('d M Y')->sortable()->label('Selesai'),
                 TextColumn::make('ticket_sold')->label('Terjual')->numeric()->sortable(),

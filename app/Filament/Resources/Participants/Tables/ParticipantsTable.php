@@ -27,23 +27,27 @@ class ParticipantsTable
                 SelectFilter::make('school')
                     ->label('Ranting/Sekolah')
                     ->options(
-                        fn() => Participant::query()
+                        static fn() => Participant::query()
+                            ->select('school')
+                            ->distinct()
+                            ->orderBy('school')
                             ->pluck('school', 'school')
-                            ->unique()
-                            ->sort()
                             ->toArray()
                     )
+                    ->getOptionLabelUsing(fn($value) => $value)
                     ->searchable(),
 
                 SelectFilter::make('level')
                     ->label('Tingkatan')
                     ->options(
-                        fn() => Participant::query()
+                        static fn() => Participant::query()
+                            ->select('level')
+                            ->distinct()
+                            ->orderBy('level')
                             ->pluck('level', 'level')
-                            ->unique()
-                            ->sort()
                             ->toArray()
                     )
+                    ->getOptionLabelUsing(fn($value) => $value)
                     ->searchable(),
             ])
             ->recordActions([
