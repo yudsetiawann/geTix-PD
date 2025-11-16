@@ -6,6 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="csrf-token" content="{{ csrf_token() }}">
 
+  {{-- TAMBAHKAN 3 BARIS INI UNTUK MENCEGAH CACHING --}}
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  {{-- AKHIR TAMBAHAN --}}
+
   <title>{{ config('app.name', 'Laravel') }}</title>
   <link rel="icon" type="image/png" href="{{ asset('img/Logo-PD.png') }}" />
 

@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-{{-- Hapus class bg-gray-100/dark:bg-gray-900 dari sini --}}
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full">
 
 <head>
@@ -31,7 +30,7 @@
 
 {{-- === 2. PINDAHKAN LOGIKA ALPINE KE BODY === --}}
 
-<body class="h-full font-sans antialiased bg-gray-100 dark:bg-gray-900" {{-- Tambahkan class BG di sini --}} x-data="{
+<body class="h-full font-sans antialiased bg-gray-100 dark:bg-gray-900" x-data="{
     darkMode: localStorage.getItem('darkMode') === 'true' || (!('darkMode' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches),
     init() {
         // $watch HANYA bertugas mengupdate atribut SAAT DI-TOGGLE
