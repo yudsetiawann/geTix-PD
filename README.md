@@ -1,61 +1,98 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
-
+<!-- Logo di tengah -->
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+<img src="public/img/Logo-PD.png" alt="Logo Perisai Diri" width="150">
 </p>
+<!-- Judul Utama -->
+<h1 align="center">
+geTix PD
+</h1>
+<!-- Subjudul & Badges -->
+<p align="center">
+<strong>Sistem E-Ticketing & Manajemen Event untuk Keluarga Silat Nasional Perisai Diri</strong>
 
-## About Laravel
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Sebuah proyek Pengabdian Kepada Masyarakat (PKM) untuk mentransformasi manajemen event dari manual menjadi digital.
+</p>
+<p align="center">
+<img src="https://www.google.com/search?q=https://img.shields.io/badge/Laravel-12-FF2D20.svg%3Fstyle%3Dfor-the-badge%26logo%3Dlaravel" alt="Laravel 12">
+<img src="https://www.google.com/search?q=https://img.shields.io/badge/Filament-4-F59E0B.svg%3Fstyle%3Dfor-the-badge" alt="Filament 4">
+<img src="https://www.google.com/search?q=https://img.shields.io/badge/Tailwind_CSS-4-38B2AC.svg%3Fstyle%3Dfor-the-badge%26logo%3Dtailwind-css" alt="Tailwind 4">
+<img src="https://www.google.com/search?q=https://img.shields.io/badge/PHP-8.3%252B-777BB4.svg%3Fstyle%3Dfor-the-badge%26logo%3Dphp" alt="PHP 8.3+">
+</p>
+🎯 Latar Belakang: Masalah
+Secara tradisional, proses pendaftaran event di Perisai Diri (seperti Ujian Kenaikan Tingkat atau Kejuaraan) seringkali bergantung pada proses manual:
+📝 Pendaftaran: Formulir kertas yang harus diisi dan dikumpulkan.
+💰 Pembayaran: Pembayaran tunai di sekretariat yang sulit dilacak.
+📊 Rekap Data: Panitia harus memasukkan ulang data dari kertas ke Excel, rawan human error.
+🎟️ Tiket & Absensi: Menggunakan daftar hadir cetak atau tiket fisik yang mudah hilang atau dipalsukan.
+⏰ Waktu: Proses manual ini memakan waktu dan tenaga panitia yang berharga.
+🚀 Solusi: geTix PD
+geTix PD adalah aplikasi web lengkap yang mentransformasi seluruh proses ini menjadi satu alur digital yang efisien, aman, dan profesional.
+Untuk Peserta: Pengalaman pendaftaran yang modern, cepat, dan aman dari mana saja.
+Untuk Panitia: Satu "Pusat Kontrol" untuk mengelola semua aspek event, mulai dari penjualan tiket hingga check-in di hari H.
+✨ Fitur Utama
+🎨 Halaman Pengguna (Frontend)
+Daftar Event: Galeri visual semua event yang akan datang.
+Detail Event: Halaman lengkap berisi deskripsi, poster, galeri foto, lokasi (embed Google Maps), dan info kontak.
+Pemesanan Cerdas: Form pemesanan dinamis yang menyesuaikan input dan harga berdasarkan tipe event (misal: Ujian vs. Pertandingan).
+Gateway Pembayaran: Integrasi penuh dengan Midtrans (GoPay, BCA VA, Mandiri, dll.) untuk pembayaran instan dan aman.
+Notifikasi Email: Sistem otomatis mengirim e-ticket ke email peserta setelah pembayaran lunas.
+Halaman "Tiket Saya": Portal bagi pengguna untuk melihat riwayat transaksi, mengunduh ulang tiket, atau membatalkan pesanan yang masih pending.
+Dark Mode Toggle: Tampilan light/dark mode yang modern dan responsif.
+🛡️ Panel Admin & Scanner (Backend - Filament 4)
+Dibangun menggunakan Filament 4 sebagai panel admin yang tangguh, dengan 3 level akses:
+Super Admin (Role: admin)
+📊 Dashboard Statistik: Menampilkan total pendapatan, grafik penjualan, dan tiket terjual per event secara real-time (dengan Lazy Loading).
+Manajemen Event (CRUD): Membuat, mengedit, dan menghapus event.
+Harga Dinamis: Kemampuan untuk mengatur harga tiket statis (harga tunggal) atau harga dinamis berdasarkan dropdown (misal: harga Ujian Kenaikan Tingkat berdasarkan sabuk, atau harga Kejuaraan berdasarkan kategori tanding).
+Manajemen Peserta (CRUD): Mengelola database atlet/anggota.
+Impor Data: Fitur impor data peserta massal dari file Excel/CSV.
+Manajemen User: Mengatur pengguna sistem dan role mereka (admin, scanner, user).
+Manajemen Absensi: Mengelola absensi latihan harian atlet (terpisah dari event).
+Panitia Lapangan (Role: scanner)
+Hanya bisa mengakses 2 halaman: Dashboard (hanya melihat) dan Halaman Scan E-Ticket.
+Akses menu lain (Users, Events, Peserta) disembunyikan.
+User Biasa (Role: user)
+Tidak bisa mengakses panel admin sama sekali (canAccessPanel = false).
+🎟️ Fitur Inti: E-Ticket & Sistem Check-In
+Ini adalah jantung dari aplikasi:
+Pembuatan E-Ticket Otomatis: Setelah MidtransController menerima webhook pembayaran paid, sistem otomatis:
+Menyimpan ticket_code unik ke database.
+Meng-update stok ticket_quota dan ticket_sold di event.
+Membuat e-ticket PDF yang didesain khusus (laravel-dompdf).
+Menghasilkan QR Code Unik (simple-qrcode) di dalam PDF.
+Menyimpan PDF ke storage (spatie/laravel-medialibrary).
+Mengirim email Mailable (SendETicket) ke peserta dengan lampiran PDF.
+Sistem Check-In Scanner:
+Panitia/Scanner membuka halaman "Scan E-Ticket" di HP atau Laptop.
+Menggunakan html5-qrcode untuk memindai QR code dari e-ticket peserta.
+Sistem memvalidasi tiket secara real-time:
+BERHASIL: Jika tiket valid dan belum check-in.
+DUPLIKAT: Jika tiket sudah pernah di-scan.
+PENDING: Jika pembayaran tiket belum lunas.
+GAGAL: Jika kode tiket tidak ada di database.
+Tersedia input manual (fallback) jika kamera gagal memindai.
+📸 Tangkapan Layar
+Halaman Depan (Event)
+Halaman "Tiket Saya"
+<img src="https://www.google.com/search?q=https://i.imgur.com/v88Ea8e.jpeg" alt="Halaman Depan" width="400">
+<img src="https://www.google.com/search?q=https://i.imgur.com/kM8G1uR.png" alt="Halaman Tiket Saya" width="400">
+Panel Admin (Dashboard)
+Panel Admin (Scanner Check-in)
+<img src="https://www.google.com/search?q=https://i.imgur.com/R3aBwY5.png" alt="Dashboard Admin" width="400">
+<img src="https://www.google.com/search?q=https://i.imgur.com/P0N7J3s.png" alt="Halaman Scanner" width="400">
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
-
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
-
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Catatan: Gambar di atas adalah representasi berdasarkan file yang di-upload selama proses pengembangan.
+🛠️ Tumpukan Teknologi
+Backend: Laravel 12, PHP 8.3
+Frontend: Blade, Tailwind CSS 4, Alpine.js
+Panel Admin: Filament 4
+Database: MySQL
+Pembayaran: Midtrans (Snap)
+Fitur Inti:
+barryvdh/laravel-dompdf (Pembuatan PDF E-Ticket)
+simplesoftwareio/simple-qrcode (Pembuatan QR Code)
+spatie/laravel-medialibrary (Manajemen Upload Gambar & PDF)
+maatwebsite/excel (Impor & Ekspor Data Peserta)
+laravel/breeze (Autentikasi Blade)
+Deployment: cPanel/Shared Hosting (dengan konfigurasi filesystems kustom)
