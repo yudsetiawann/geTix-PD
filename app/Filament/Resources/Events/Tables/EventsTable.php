@@ -49,11 +49,11 @@ class EventsTable
                     )
                     ->icon('heroicon-m-ticket'),
 
-                TextColumn::make('ticket_price')
-                    ->money('IDR')
-                    ->label('Harga Mulai')
-                    ->placeholder('Gratis / Dinamis')
-                    ->sortable(),
+                // TextColumn::make('ticket_price')
+                //     ->money('IDR')
+                //     ->label('Harga Mulai')
+                //     ->placeholder('Gratis / Dinamis')
+                //     ->sortable(),
             ])
             ->filters([
                 // Filter berdasarkan Tipe Event akan sangat berguna
