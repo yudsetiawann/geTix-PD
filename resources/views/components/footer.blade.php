@@ -39,7 +39,7 @@
             </a>
           </li>
           <li>
-            <a href="/my-tickets"
+            <a href="/my-receipts"
               class="text-sm text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 flex items-center gap-2 group">
               <span class="h-px w-0 bg-blue-600 transition-all duration-300 group-hover:w-3"></span>
               Tiket Saya
