@@ -11,7 +11,7 @@ class CertificateController extends Controller
     public function download(Order $order)
     {
         // 1. Validasi Keamanan
-        if ($order->user_id !== auth()->id()) {
+        if ((int) $order->user_id !== auth()->id()) {
             abort(403);
         }
 
