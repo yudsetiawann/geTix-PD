@@ -1,12 +1,13 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\TicketController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\TicketController;
 use App\Http\Controllers\MidtransController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CertificateController;
 
 /*
 |--------------------------------------------------------------------------
@@ -62,6 +63,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/my-receipts/{order}/show', [TicketController::class, 'show'])->name('tickets.show');
     Route::get('/my-receipts/{order}/get', [TicketController::class, 'download'])->name('tickets.download');
     Route::delete('/my-receipts/{order}/remove', [TicketController::class, 'cancel'])->name('tickets.cancel');
+
+    // Sertifikat
+    Route::get('/certificates/{order}/download', [CertificateController::class, 'download'])->name('certificates.download');
 });
 
 /*

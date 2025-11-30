@@ -20,10 +20,16 @@ class Order extends Model implements HasMedia
         'total_price',
         'customer_name',
         'phone_number',
+        'nik',           // <-- Baru
+        'kk',            // <-- Baru
+        'birth_place',   // <-- Baru
+        'birth_date',    // <-- Baru
+        'weight',        // <-- Baru
         'school',
         'level',
         'competition_level',
         'category',
+        'class',         // <-- Baru
         'status',
         'midtrans_token',
         'checked_in_at',
@@ -31,6 +37,7 @@ class Order extends Model implements HasMedia
 
     protected $casts = [
         'checked_in_at' => 'datetime',
+        'birth_date' => 'date', // <-- Casting agar otomatis jadi object Date
     ];
 
     // Relasi ke Event

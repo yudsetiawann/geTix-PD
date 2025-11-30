@@ -13,7 +13,7 @@ class TicketController extends Controller
     public function index()
     {
         $orders = Order::where('user_id', Auth::id())
-            ->with('event:id,title')
+            ->with('event')
             ->latest()
             ->paginate(10);
         return view('profile.my-tickets', compact('orders'));

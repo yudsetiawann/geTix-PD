@@ -133,76 +133,147 @@
             <h2 class="text-base font-semibold leading-6 text-slate-900 dark:text-white">Detail Peserta</h2>
           </div>
           <div class="space-y-6 p-4 sm:p-6">
+            {{-- Nama --}}
             <div>
               <label for="customer_name" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Nama
                 Lengkap</label>
               <input type="text" name="customer_name" id="customer_name" required value="{{ old('customer_name') }}"
                 class="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-600 focus:ring-blue-600 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:border-blue-500">
             </div>
+            <div x-show="eventType === 'pertandingan'" class="space-y-6">
+
+              {{-- NIK & KK --}}
+              <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                <div>
+                  <label for="nik" class="block text-sm font-medium text-gray-700 dark:text-gray-300">NIK</label>
+                  <input type="text" name="nik" id="nik" :required="eventType === 'pertandingan'"
+                    class="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-600 focus:ring-blue-600 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:border-blue-500">
+                </div>
+                <div>
+                  <label for="kk" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nomor
+                    KK</label>
+                  <input type="text" name="kk" id="kk" :required="eventType === 'pertandingan'"
+                    class="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-600 focus:ring-blue-600 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:border-blue-500">
+                </div>
+              </div>
+
+              {{-- TTL & Berat Badan --}}
+              <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
+                <div>
+                  <label for="birth_place" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tempat
+                    Lahir</label>
+                  <input type="text" name="birth_place" id="birth_place" :required="eventType === 'pertandingan'"
+                    class="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-600 focus:ring-blue-600 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:border-blue-500">
+                </div>
+                <div>
+                  <label for="birth_date" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tanggal
+                    Lahir</label>
+                  <input type="date" name="birth_date" id="birth_date" :required="eventType === 'pertandingan'"
+                    class="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-600 focus:ring-blue-600 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:border-blue-500">
+                </div>
+                <div>
+                  <label for="weight" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Berat
+                    Badan (Kg)</label>
+                  <input type="number" name="weight" id="weight" :required="eventType === 'pertandingan'"
+                    class="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-600 focus:ring-blue-600 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:border-blue-500">
+                </div>
+              </div>
+            </div>
+            {{-- No. Telp --}}
             <div>
               <label for="phone_number" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Nomor
                 Telepon</label>
-              <input type="tel" name="phone_number" id="phone_number" required value="{{ old('phone_number') }}"
+              <input type="tel" name="phone_number" id="phone_number" required
+                value="{{ old('phone_number') }}"
                 class="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-600 focus:ring-blue-600 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:border-blue-500"
                 placeholder="Contoh: 08123456789">
             </div>
+            {{-- Ranting --}}
             <div>
               <label for="school" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Ranting /
                 Sekolah</label>
               <input type="text" name="school" id="school" required value="{{ old('school') }}"
                 class="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-600 focus:ring-blue-600 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:border-blue-500">
             </div>
-          </div>
-        </div>
 
-        {{-- Bagian 3: Pilihan Tiket (Kondisional) --}}
-        <div
-          class="overflow-hidden rounded-xl border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800">
-          <div class="border-b border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-800/50 sm:px-6">
-            <h2 class="text-base font-semibold leading-6 text-slate-900 dark:text-white">Pilih Tiket</h2>
-          </div>
-          <div class="space-y-6 p-4 sm:p-6">
-            {{-- Dropdown Tingkatan SABUK (Sekarang selalu tampil, sesuai kode asli) --}}
-            <div>
-              <label for="level" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Tingkatan
-              </label>
-              <select name="level" id="level" required x-model="selectedLevel" x-on:change="calculatePrice()"
-                class="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-600 focus:ring-blue-600 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:border-blue-500">
-                <option value="" disabled>-- Pilih Tingkatan --</option>
-                @php $levels = ['Pemula', 'Dasar I', 'Dasar II', 'Cakel', 'Putih', 'Putih Hijau', 'Hijau']; @endphp
-                @foreach ($levels as $levelOption)
-                  <option value="{{ $levelOption }}" @selected(old('level') == $levelOption)>{{ $levelOption }}</option>
-                @endforeach
-              </select>
-            </div>
 
-            {{-- Dropdown Tingkatan USIA & KATEGORI (hanya untuk event 'pertandingan') --}}
-            <div x-show="eventType === 'pertandingan'" class="space-y-6">
+            {{-- Bagian Grid Dinamis --}}
+            {{-- Perubahan 1: Menggunakan :class untuk mengatur kolom berdasarkan eventType --}}
+            <div class="grid gap-6"
+              :class="eventType === 'pertandingan' ? 'grid-cols-1 sm:grid-cols-3' : 'grid-cols-1'">
+
+              {{-- 1. Dropdown Tingkatan SABUK --}}
+              {{-- Selalu muncul, akan mengambil 1/3 lebar jika pertandingan, atau full jika ujian --}}
               <div>
-                <label for="competition_level"
-                  class="block text-sm font-medium text-slate-700 dark:text-slate-300">Tingkat
-                  (Usia)</label>
+                <label for="level" class="block text-sm font-medium text-slate-700 dark:text-slate-300">
+                  Tingkatan
+                </label>
+                <select name="level" id="level" required x-model="selectedLevel"
+                  x-on:change="calculatePrice()"
+                  class="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-600 focus:ring-blue-600 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:border-blue-500">
+                  <option value="" disabled>-- Pilih Tingkatan --</option>
+                  @php $levels = ['Pemula', 'Dasar I', 'Dasar II', 'Cakel', 'Putih', 'Putih Hijau', 'Hijau']; @endphp
+                  @foreach ($levels as $levelOption)
+                    <option value="{{ $levelOption }}" @selected(old('level') == $levelOption)>{{ $levelOption }}</option>
+                  @endforeach
+                </select>
+              </div>
+
+              {{-- Perubahan 2: Menghapus wrapper div agar input ini menjadi direct child dari grid --}}
+
+              {{-- 2. Tingkat (Usia) - Hanya muncul jika pertandingan --}}
+              <div x-show="eventType === 'pertandingan'">
+                <label for="competition_level" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Tingkat (Usia)
+                </label>
                 <select name="competition_level" id="competition_level" :required="eventType === 'pertandingan'"
                   x-model="selectedCompetitionLevel"
                   class="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-600 focus:ring-blue-600 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:border-blue-500">
                   <option value="" disabled>-- Pilih Tingkat Usia --</option>
                   @php $competitionLevels = ['Usia Dini 1', 'Usia Dini 2', 'Pra Remaja', 'Remaja', 'Dewasa']; @endphp
                   @foreach ($competitionLevels as $compLevel)
-                    <option value="{{ $compLevel }}" @selected(old('competition_level') == $compLevel)>{{ $compLevel }}</option>
+                    <option value="{{ $compLevel }}">{{ $compLevel }}</option>
                   @endforeach
                 </select>
               </div>
-              <div>
-                <label for="category" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Kategori
-                  Pertandingan</label>
+
+              {{-- 3. Kategori - Hanya muncul jika pertandingan --}}
+              <div x-show="eventType === 'pertandingan'">
+                <label for="category" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Kategori
+                </label>
                 <select name="category" id="category" :required="eventType === 'pertandingan'"
                   x-model="selectedCategory" x-on:change="calculatePrice()"
                   class="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-600 focus:ring-blue-600 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:border-blue-500">
                   <option value="" disabled>-- Pilih Kategori --</option>
                   @php $categories = ['Tanding', 'TGR', 'Serang Hindar']; @endphp
                   @foreach ($categories as $cat)
-                    <option value="{{ $cat }}" @selected(old('category') == $cat)>{{ $cat }}</option>
+                    <option value="{{ $cat }}">{{ $cat }}</option>
                   @endforeach
+                </select>
+              </div>
+
+              {{-- 4. KELAS TANDING (Khusus) --}}
+              {{-- Kita gunakan col-span-full agar jika dia muncul, dia mengambil lebar penuh di baris baru --}}
+              <div x-show="selectedCategory === 'Tanding'" class="sm:col-span-full">
+                <label for="class" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Kelas Tanding
+                </label>
+                <select name="class" id="class" :required="selectedCategory === 'Tanding'"
+                  class="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-600 focus:ring-blue-600 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:border-blue-500">
+                  <option value="" disabled selected>-- Pilih Kelas --</option>
+                  <optgroup label="Putra">
+                    @foreach (range('A', 'J') as $char)
+                      <option value="Kelas {{ $char }} Putra">Kelas {{ $char }} Putra</option>
+                    @endforeach
+                    <option value="Bebas Putra">Kelas Bebas Putra</option>
+                  </optgroup>
+                  <optgroup label="Putri">
+                    @foreach (range('A', 'J') as $char)
+                      <option value="Kelas {{ $char }} Putri">Kelas {{ $char }} Putri</option>
+                    @endforeach
+                    <option value="Bebas Putri">Kelas Bebas Putri</option>
+                  </optgroup>
                 </select>
               </div>
             </div>
@@ -216,7 +287,7 @@
           </div>
         </div>
 
-        {{-- Bagian 4: Total & Submit --}}
+        {{-- Bagian 3: Total & Submit --}}
         <div
           class="overflow-hidden rounded-xl bg-white shadow-lg ring-1 ring-slate-900/5 dark:bg-slate-800 dark:ring-white/10">
           <div class="p-5 sm:flex sm:items-center sm:justify-between">
