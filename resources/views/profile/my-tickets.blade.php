@@ -68,34 +68,48 @@
           <div
             class="flex shrink-0 flex-col gap-3 bg-slate-50 p-5 dark:bg-slate-800/50 sm:w-56 sm:items-stretch sm:justify-center sm:border-l sm:dark:border-slate-700">
             @if ($order->status === 'paid')
+              {{-- PERBAIKAN: Div wrapper dihapus agar tombol stack vertikal & full width --}}
+
               @if ($order->ticket_code)
                 <a href="{{ route('tickets.show', $order) }}" target="_blank"
-                  class="w-full sm:w-auto text-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors duration-200 hover:bg-blue-700">
+                  class="flex w-full items-center justify-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors duration-200 hover:bg-blue-700">
                   Lihat E-Ticket
                 </a>
                 <a href="{{ route('tickets.download', $order) }}"
-                  class="w-full sm:w-auto text-center rounded-lg bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition-colors duration-200 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600">
+                  class="flex w-full items-center justify-center rounded-lg bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition-colors duration-200 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600">
                   Download
                 </a>
               @else
-                {{-- Jika status paid tapi kode tiket belum ada --}}
                 <span
                   class="rounded-full bg-yellow-50 px-3 py-1.5 text-center text-sm font-medium text-yellow-700 dark:bg-yellow-900/50 dark:text-yellow-300">
                   Diproses
                 </span>
               @endif
+
+              {{-- Tombol Sertifikat --}}
+              @if ($order->event->is_certificate_published)
+                <a href="{{ route('certificates.download', $order) }}" target="_blank"
+                  class="flex w-full items-center justify-center rounded-lg bg-amber-500 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors duration-200 hover:bg-amber-600">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="mr-1.5 size-4">
+                    <path fill-rule="evenodd"
+                      d="M10 1a4.5 4.5 0 0 0-4.5 4.5V9H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-.5V5.5A4.5 4.5 0 0 0 10 1Zm3 8V5.5a3 3 0 1 0-6 0V9h6Z"
+                      clip-rule="evenodd" />
+                  </svg>
+                  Sertifikat
+                </a>
+              @endif
             @elseif ($order->status === 'pending')
               {{-- Tombol Bayar --}}
               <a href="{{ route('orders.payment', $order) }}"
-                class="w-full sm:w-auto text-center rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors duration-200 hover:bg-green-700">
+                class="flex w-full items-center justify-center rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors duration-200 hover:bg-green-700">
                 Bayar
               </a>
-              {{-- Tombol Batalkan (form) --}}
+              {{-- Tombol Batalkan --}}
               <form action="{{ route('tickets.cancel', $order) }}" method="POST">
                 @csrf
                 @method('DELETE')
                 <button type="submit"
-                  class="w-full text-center rounded-lg px-4 py-2 text-sm font-medium text-red-600 transition-colors duration-200 hover:bg-red-100 dark:text-red-400 dark:hover:bg-red-900/30">
+                  class="w-full rounded-lg px-4 py-2 text-center text-sm font-medium text-red-600 transition-colors duration-200 hover:bg-red-100 dark:text-red-400 dark:hover:bg-red-900/30">
                   Batalkan
                 </button>
               </form>
