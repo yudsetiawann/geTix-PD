@@ -1,10 +1,10 @@
-<section class="rounded-xl border border-red-100 bg-red-50/50 p-6 dark:border-red-900/30 dark:bg-red-900/10 sm:p-8">
+<section class="rounded-xl border border-red-100 bg-red-50/50 p-4 sm:p-8 dark:border-red-900/30 dark:bg-red-900/10">
 
-  {{-- Header --}}
-  <header class="flex items-start gap-4 mb-6">
+  {{-- Header Section --}}
+  <header class="flex flex-col sm:flex-row items-start gap-4 mb-6">
     <div
       class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400">
-      {{-- Ikon Sampah / Danger --}}
+      {{-- Ikon Sampah --}}
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
         class="size-6">
         <path stroke-linecap="round" stroke-linejoin="round"
@@ -22,16 +22,14 @@
   </header>
 
   <x-danger-button x-data="" x-on:click.prevent="$dispatch('open-modal', 'confirm-user-deletion')"
-    class="px-5 py-2.5 text-sm font-semibold">{{ __('Hapus Akun') }}</x-danger-button>
+    class="w-full sm:w-auto justify-center px-5 py-2.5 text-sm font-semibold">
+    {{ __('Hapus Akun') }}
+  </x-danger-button>
 
   {{-- Modal Konfirmasi --}}
   <x-modal name="confirm-user-deletion" :show="$errors->userDeletion->isNotEmpty()" focusable>
-    {{-- 
-            PERBAIKAN DI SINI: 
-            Saya menambahkan div wrapper dengan class bg-white dan dark:bg-slate-800 
-            agar modal memiliki latar belakang yang solid dan tidak transparan.
-        --}}
-    <div class="p-6 bg-white dark:bg-slate-800">
+    {{-- Wrapper Konten Modal: Menggunakan p-4 untuk mobile agar lebih hemat tempat --}}
+    <div class="p-4 sm:p-6 bg-white dark:bg-slate-800">
       <form method="post" action="{{ route('profile.destroy') }}">
         @csrf
         @method('delete')
@@ -46,15 +44,16 @@
                 d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
             </svg>
           </div>
-          <h2 class="text-lg font-bold text-slate-900 dark:text-white">
-            {{ __('Apakah Anda yakin ingin menghapus akun?') }}
+          <h2 class="text-lg font-bold text-slate-900 dark:text-white leading-tight">
+            {{ __('Apakah Anda yakin?') }}
           </h2>
         </div>
 
-        <p class="text-sm text-slate-600 dark:text-slate-400 ml-13 pl-1">
-          {{ __('Setelah akun Anda dihapus, semua sumber daya dan datanya akan dihapus secara permanen. Silakan masukkan kata sandi Anda untuk mengonfirmasi bahwa Anda ingin menghapus akun Anda secara permanen.') }}
+        <p class="text-sm text-slate-600 dark:text-slate-400">
+          {{ __('Akun akan dihapus permanen. Masukkan kata sandi Anda untuk konfirmasi.') }}
         </p>
 
+        {{-- Input Password --}}
         <div class="mt-6">
           <x-input-label for="password" value="{{ __('Password') }}" class="sr-only" />
 
@@ -65,12 +64,15 @@
           <x-input-error :messages="$errors->userDeletion->get('password')" class="mt-2" />
         </div>
 
-        <div class="mt-6 flex justify-end gap-3">
-          <x-secondary-button x-on:click="$dispatch('close')" class="px-4 py-2 rounded-lg">
+        {{-- Tombol Aksi: Stacked pada Mobile --}}
+        <div class="mt-6 flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
+          <x-secondary-button x-on:click="$dispatch('close')"
+            class="w-full sm:w-auto justify-center px-4 py-2 hover:bg-gray-200 rounded-lg cursor-pointer">
             {{ __('Batal') }}
           </x-secondary-button>
 
-          <x-danger-button class="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 border-transparent">
+          <x-danger-button
+            class="w-full sm:w-auto justify-center px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 border-transparent cursor-pointer">
             {{ __('Ya, Hapus Akun') }}
           </x-danger-button>
         </div>
