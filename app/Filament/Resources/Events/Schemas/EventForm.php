@@ -104,10 +104,12 @@ class EventForm
 
                     Section::make('Pengaturan Sertifikat')
                         ->schema([
-                            FileUpload::make('certificate_template')
+                            SpatieMediaLibraryFileUpload::make('certificate_template')
                                 ->label('Template Sertifikat (Gambar Kosong)')
+                                ->collection('certificate_template') // Disimpan dalam koleksi khusus
                                 ->image()
-                                ->directory('certificates') // Folder penyimpanan di dalam disk
+                                ->imageEditor() // Opsional: Memudahkan crop/edit sebelum upload
+                                ->maxSize(5120) // Opsional: Batas 5MB
                                 ->columnSpanFull(),
 
 

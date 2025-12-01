@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage; // Tambahkan ini
+// use Illuminate\Support\Facades\Storage; // Tidak wajib lagi jika pakai getPath() Spatie
 
 class CertificateController extends Controller
 {
@@ -16,10 +16,15 @@ class CertificateController extends Controller
             abort(403);
         }
 
-        // Pastikan event punya template & sudah diterbitkan
         $event = $order->event;
-        if (!$event->certificate_template || !$event->is_certificate_published) {
-            return back()->with('error', 'Sertifikat belum tersedia.');
+
+        // --- BAGIAN 1: AMBIL MEDIA DARI SPATIE ---
+        // Ambil file pertama dari collection 'certificate_template'
+        $mediaItem = $event->getFirstMedia('certificate_template');
+
+        // Validasi: Pastikan media ada & status published
+        if (!$mediaItem || !$event->is_certificate_published) {
+            return back()->with('error', 'Sertifikat belum tersedia atau template belum diupload.');
         }
 
         // 2. Tentukan Teks Prestasi
@@ -31,22 +36,19 @@ class CertificateController extends Controller
         $marginTopStatus = $settings['status_top_margin'] ?? 450;
         $fontColor = $settings['font_color'] ?? '#000000';
 
-        // --- BAGIAN KRUSIAL: MENGAMBIL GAMBAR ---
+        // --- BAGIAN 2: PROSES GAMBAR KE BASE64 ---
 
-        // Kita gunakan Storage facade untuk mendapatkan konten file,
-        // karena konfigurasi disk Anda sudah benar (mengarah ke public_html/storage di prod).
-        // Ini jauh lebih aman daripada menebak path fisik.
+        // Spatie memudahkan kita mengambil full path fisik file di server
+        // Contoh: /var/www/html/storage/app/public/1/template.jpg
+        $path = $mediaItem->getPath();
 
-        $diskName = config('filesystems.default_public_disk', 'public'); // Ambil disk aktif (public/upload_disk)
-
-        if (Storage::disk($diskName)->exists($event->certificate_template)) {
-            // Ambil konten file langsung dari disk
-            $imageContent = Storage::disk($diskName)->get($event->certificate_template);
-            // Encode ke base64
+        if (file_exists($path)) {
+            // Baca file langsung dari path fisik
+            $imageContent = file_get_contents($path);
+            // Encode ke base64 agar aman dirender oleh DomPDF
             $backgroundImage = base64_encode($imageContent);
         } else {
-            // Fallback darurat jika file tidak ketemu (misal path salah)
-            return back()->with('error', 'File template sertifikat tidak ditemukan.');
+            return back()->with('error', 'File fisik template sertifikat hilang dari server.');
         }
 
         // ----------------------------------------
@@ -59,11 +61,12 @@ class CertificateController extends Controller
             'marginTopName' => $marginTopName,
             'marginTopStatus' => $marginTopStatus,
             'fontColor' => $fontColor,
-            'backgroundImage' => $backgroundImage,
+            'backgroundImage' => $backgroundImage, // Ini dikirim sebagai base64 string
         ]);
 
-        // Set ukuran kertas
-        $pdf->setPaper('a4', 'landscape');
+        // Set ukuran kertas (Ambil dari settings jika ada, default landscape)
+        $orientation = $settings['orientation'] ?? 'landscape';
+        $pdf->setPaper('a4', $orientation);
 
         return $pdf->stream('Sertifikat-' . $order->customer_name . '.pdf');
     }
