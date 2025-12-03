@@ -34,10 +34,35 @@
 
             let price = 0;
             if (this.eventType === 'ujian' && this.selectedLevel) {
-                // Logika harga ujian (sabuk)
-                if (['Pemula', 'Dasar I', 'Dasar II'].includes(this.selectedLevel)) price = this.levelPrices?.pemula_dasar2 ?? 0;
-                else if (['Cakel', 'Putih'].includes(this.selectedLevel)) price = this.levelPrices?.cakel_putih ?? 0;
-                else if (['Putih Hijau', 'Hijau'].includes(this.selectedLevel)) price = this.levelPrices?.putihhijau_hijau ?? 0;
+                // Kelompok 1: Pemula & Dasar I
+                if (['Pemula', 'Dasar I'].includes(this.selectedLevel)) {
+                    price = this.levelPrices?.pemula_dasar1 ?? 0;
+                }
+
+                // Kelompok 2: Dasar II
+                else if (this.selectedLevel === 'Dasar II') {
+                    price = this.levelPrices?.dasar2 ?? 0;
+                }
+
+                // Kelompok 3: Cakel
+                else if (this.selectedLevel === 'Cakel') {
+                    price = this.levelPrices?.cakel ?? 0;
+                }
+
+                // Kelompok 4: Putih
+                else if (this.selectedLevel === 'Putih') {
+                    price = this.levelPrices?.putih ?? 0;
+                }
+
+                // Kelompok 5: Putih Hijau
+                else if (this.selectedLevel === 'Putih Hijau') {
+                    price = this.levelPrices?.putih_hijau ?? 0;
+                }
+
+                // Kelompok 6: Hijau
+                else if (this.selectedLevel === 'Hijau') {
+                    price = this.levelPrices?.hijau ?? 0;
+                }
             } else if (this.eventType === 'pertandingan' && this.selectedCategory) {
                 // Logika harga pertandingan (kategori)
                 const categoryKey = this.selectedCategory.toLowerCase().replace(' ', '_'); // 'Serang Hindar' -> 'serang_hindar'

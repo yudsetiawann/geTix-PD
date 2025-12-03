@@ -83,13 +83,35 @@ class Event extends Model implements HasMedia
 
         // Jika tipe 'ujian' dan ada tingkatan dipilih
         if ($this->event_type === 'ujian' && !empty($level)) {
-            // Logika harga ujian
-            if (in_array($level, ['Pemula', 'Dasar I', 'Dasar II'])) {
-                return isset($prices['pemula_dasar2']) ? (float) $prices['pemula_dasar2'] : null;
-            } elseif (in_array($level, ['Cakel', 'Putih'])) {
-                return isset($prices['cakel_putih']) ? (float) $prices['cakel_putih'] : null;
-            } elseif (in_array($level, ['Putih Hijau', 'Hijau'])) {
-                return isset($prices['putihhijau_hijau']) ? (float) $prices['putihhijau_hijau'] : null;
+
+            // Kelompok 1: Pemula & Dasar I (Harga Sama)
+            if (in_array($level, ['Pemula', 'Dasar I'])) {
+                return isset($prices['pemula_dasar1']) ? (float) $prices['pemula_dasar1'] : null;
+            }
+
+            // Kelompok 2: Dasar II (Sendiri)
+            elseif ($level === 'Dasar II') {
+                return isset($prices['dasar2']) ? (float) $prices['dasar2'] : null;
+            }
+
+            // Kelompok 3: Cakel (Sendiri)
+            elseif ($level === 'Cakel') {
+                return isset($prices['cakel']) ? (float) $prices['cakel'] : null;
+            }
+
+            // Kelompok 4: Putih (Sendiri)
+            elseif ($level === 'Putih') {
+                return isset($prices['putih']) ? (float) $prices['putih'] : null;
+            }
+
+            // Kelompok 5: Putih Hijau (Sendiri)
+            elseif ($level === 'Putih Hijau') {
+                return isset($prices['putih_hijau']) ? (float) $prices['putih_hijau'] : null;
+            }
+
+            // Kelompok 6: Hijau (Sendiri)
+            elseif ($level === 'Hijau') {
+                return isset($prices['hijau']) ? (float) $prices['hijau'] : null;
             }
         }
         // Jika tipe 'pertandingan' dan ada kategori dipilih

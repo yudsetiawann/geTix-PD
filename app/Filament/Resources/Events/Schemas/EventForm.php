@@ -164,9 +164,20 @@ class EventForm
 
                             KeyValue::make('level_prices')
                                 ->label('Daftar Harga')
-                                ->keyLabel('Kategori')
+                                ->keyLabel('Tingkatan/Kategori')
                                 ->valueLabel('Harga')
-                                ->visible(fn(Get $get): bool => $get('has_dynamic_pricing')),
+                                // ->valueHelperText('Masukkan hanya angka, misal: 50000')
+                                ->visible(fn(Get $get): bool => $get('has_dynamic_pricing'))
+                                ->columnSpanFull(),
+                                // ->helperText(function (Get $get): string {
+                                //     if ($get('event_type') === 'ujian') {
+                                //         // UPDATE DI SINI: Sesuaikan panduan dengan logika baru Anda
+                                //         return 'Untuk Ujian (Gunakan Key ini): pemula_dasar1, dasar2, cakel, putih, putih_hijau, hijau';
+                                //     } elseif ($get('event_type') === 'pertandingan') {
+                                //         return 'Untuk Pertandingan: Gunakan key seperti tanding, tgr, serang_hindar.';
+                                //     }
+                                //     return 'Masukkan key harga yang sesuai.';
+                                // }),
 
                             TextInput::make('ticket_quota')
                                 ->label('Total Kuota')
