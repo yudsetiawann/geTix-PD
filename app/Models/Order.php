@@ -57,4 +57,17 @@ class Order extends Model implements HasMedia
     {
         $this->addMediaCollection('etickets')->singleFile(); // Untuk file PDF e-ticket
     }
+
+    public function examResults()
+    {
+        return $this->hasMany(ExamResult::class);
+    }
+
+    // Helper untuk mengambil nilai berdasarkan nama atribut
+    public function getExamValue(string $attributeName)
+    {
+        return $this->examResults
+            ->first(fn($result) => $result->attribute->name === $attributeName)
+            ?->value ?? '-';
+    }
 }

@@ -58,7 +58,11 @@ class Event extends Model implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('thumbnails')->singleFile(); // Untuk gambar utama
-        $this->addMediaCollection('certificate_template')->singleFile();
+        // $this->addMediaCollection('certificate_template');
+        // Koleksi untuk Halaman Depan
+        $this->addMediaCollection('certificate_front')->singleFile(); // Hapus file lama jika ada upload baru
+        // Koleksi untuk Halaman Belakang
+        $this->addMediaCollection('certificate_back')->singleFile();
         $this->addMediaCollection('gallery'); // Untuk galeri
     }
 

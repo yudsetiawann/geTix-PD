@@ -16,6 +16,7 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Schemas\Components\Fieldset;
+use Filament\Forms\Components\Placeholder;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
@@ -104,17 +105,25 @@ class EventForm
 
                     Section::make('Pengaturan Sertifikat')
                         ->schema([
-                            SpatieMediaLibraryFileUpload::make('certificate_template')
-                                ->label('Template Sertifikat (Gambar Kosong)')
-                                ->collection('certificate_template') // Disimpan dalam koleksi khusus
+                            // Uploader Depan
+                            SpatieMediaLibraryFileUpload::make('front_image')
+                                ->label('Template Depan')
+                                ->collection('certificate_front') // Disimpan dalam koleksi khusus
                                 ->image()
                                 ->imageEditor() // Opsional: Memudahkan crop/edit sebelum upload
                                 ->maxSize(5120) // Opsional: Batas 5MB
                                 ->columnSpanFull(),
 
+                            // Uploader Belakang
+                            SpatieMediaLibraryFileUpload::make('back_image')
+                                ->label('Template Belakang')
+                                ->collection('certificate_back')
+                                ->image()
+                                ->imageEditor(),
+
 
                             Toggle::make('is_certificate_published')
-                                ->label('Terbitkan Sertifikat (Buka Akses Download)')
+                                ->label('Terbitkan Sertifikat')
                                 ->inline(false),
 
                             // --- TAMBAHKAN BAGIAN INI ---
@@ -125,7 +134,7 @@ class EventForm
                                     'portrait' => 'Portrait (Tegak)',
                                 ])
                                 ->default('landscape')
-                                ->required()
+                                // ->required()
                                 ->selectablePlaceholder(false),
                             // ----------------------------
 
@@ -141,10 +150,61 @@ class EventForm
                                     ->numeric()
                                     ->default(450),
 
+                                // TAMBAHAN BARU: Setting Posisi Data Tambahan (Halaman Depan)
+                                // TextInput::make('certificate_settings.dob_top_margin')
+                                //     ->label('Jarak TTL dari Atas (px)')
+                                //     ->numeric()
+                                //     ->default(350),
+
+                                // TextInput::make('certificate_settings.school_top_margin')
+                                //     ->label('Jarak Ranting/Sekolah dari Atas (px)')
+                                //     ->numeric()
+                                //     ->default(400),
+
                                 TextInput::make('certificate_settings.font_color')
                                     ->label('Warna Teks (Hex)')
                                     ->default('#000000'),
                             ])->columns(3),
+
+                            // PEMBATAS VISUAL
+                            // Placeholder::make('separator_back')
+                            //     ->label('Pengaturan Halaman Belakang (Daftar Nilai)')
+                            //     ->columnSpanFull(),
+
+                            // PENGATURAN HALAMAN BELAKANG
+                            // Group::make()->schema([
+                            //     // 1. Posisi Awal (Koordinat X dan Y)
+                            //     TextInput::make('certificate_settings.back_content_start_y')
+                            //         ->label('Posisi Atas Baris Pertama (Y)')
+                            //         ->numeric()
+                            //         ->default(300),
+                            //     // ->required(),
+
+                            //     TextInput::make('certificate_settings.back_content_start_x')
+                            //         ->label('Posisi Kiri (X)')
+                            //         ->numeric()
+                            //         ->default(100),
+                            //     // ->required(),
+
+                            //     // 2. Pengaturan Jarak Antar Nilai
+                            //     TextInput::make('certificate_settings.back_line_height')
+                            //         ->label('Jarak Antar Baris (Line Height)')
+                            //         ->numeric()
+                            //         ->default(50), // Sesuaikan dengan jarak garis di desain sertifikat
+                            //     // ->required(),
+
+                            //     // 3. Styling Teks
+                            //     TextInput::make('certificate_settings.back_font_size')
+                            //         ->label('Ukuran Font Nilai')
+                            //         ->numeric()
+                            //         ->default(20),
+
+                            //     TextInput::make('certificate_settings.back_font_color')
+                            //         ->label('Warna Teks Nilai')
+                            //         ->default('#000000')
+                            //         ->prefix('#'),
+
+                            // ])->columns(3),
                         ]),
 
                     // Section Harga & Kuota
@@ -169,15 +229,15 @@ class EventForm
                                 // ->valueHelperText('Masukkan hanya angka, misal: 50000')
                                 ->visible(fn(Get $get): bool => $get('has_dynamic_pricing'))
                                 ->columnSpanFull(),
-                                // ->helperText(function (Get $get): string {
-                                //     if ($get('event_type') === 'ujian') {
-                                //         // UPDATE DI SINI: Sesuaikan panduan dengan logika baru Anda
-                                //         return 'Untuk Ujian (Gunakan Key ini): pemula_dasar1, dasar2, cakel, putih, putih_hijau, hijau';
-                                //     } elseif ($get('event_type') === 'pertandingan') {
-                                //         return 'Untuk Pertandingan: Gunakan key seperti tanding, tgr, serang_hindar.';
-                                //     }
-                                //     return 'Masukkan key harga yang sesuai.';
-                                // }),
+                            // ->helperText(function (Get $get): string {
+                            //     if ($get('event_type') === 'ujian') {
+                            //         // UPDATE DI SINI: Sesuaikan panduan dengan logika baru Anda
+                            //         return 'Untuk Ujian (Gunakan Key ini): pemula_dasar1, dasar2, cakel, putih, putih_hijau, hijau';
+                            //     } elseif ($get('event_type') === 'pertandingan') {
+                            //         return 'Untuk Pertandingan: Gunakan key seperti tanding, tgr, serang_hindar.';
+                            //     }
+                            //     return 'Masukkan key harga yang sesuai.';
+                            // }),
 
                             TextInput::make('ticket_quota')
                                 ->label('Total Kuota')

@@ -165,6 +165,21 @@
               <input type="text" name="customer_name" id="customer_name" required value="{{ old('customer_name') }}"
                 class="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-600 focus:ring-blue-600 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:border-blue-500">
             </div>
+
+            <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+              <div>
+                <label for="birth_place" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tempat
+                  Lahir</label>
+                <input type="text" name="birth_place" id="birth_place" :required="eventType === 'pertandingan'"
+                  class="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-600 focus:ring-blue-600 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:border-blue-500">
+              </div>
+              <div>
+                <label for="birth_date" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tanggal
+                  Lahir</label>
+                <input type="date" name="birth_date" id="birth_date" :required="eventType === 'pertandingan'"
+                  class="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-600 focus:ring-blue-600 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:border-blue-500">
+              </div>
+            </div>
             <div x-show="eventType === 'pertandingan'" class="space-y-6">
 
               {{-- NIK & KK --}}
@@ -184,18 +199,7 @@
 
               {{-- TTL & Berat Badan --}}
               <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
-                <div>
-                  <label for="birth_place" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tempat
-                    Lahir</label>
-                  <input type="text" name="birth_place" id="birth_place" :required="eventType === 'pertandingan'"
-                    class="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-600 focus:ring-blue-600 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:border-blue-500">
-                </div>
-                <div>
-                  <label for="birth_date" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tanggal
-                    Lahir</label>
-                  <input type="date" name="birth_date" id="birth_date" :required="eventType === 'pertandingan'"
-                    class="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-600 focus:ring-blue-600 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:border-blue-500">
-                </div>
+
                 <div>
                   <label for="weight" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Berat
                     Badan (Kg)</label>

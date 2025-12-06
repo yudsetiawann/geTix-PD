@@ -41,13 +41,13 @@ class OrderController extends Controller
         // KOREKSI: Tambahkan validasi level untuk SEMUA tipe event (Ujian & Pertandingan)
         // Karena di blade Anda, dropdown 'level' selalu muncul.
         $dynamicRules['level'] = 'required|string';
+        $dynamicRules['birth_place']    = 'required|string';
+        $dynamicRules['birth_date']     = 'required|date';
 
         if ($eventTypeLower === 'pertandingan') {
             // Validasi data pribadi atlet
             $dynamicRules['nik']            = 'required|numeric|digits:16';
             $dynamicRules['kk']             = 'required|numeric|digits:16';
-            $dynamicRules['birth_place']    = 'required|string';
-            $dynamicRules['birth_date']     = 'required|date';
             $dynamicRules['weight']         = 'required|integer|min:10';
 
             // Validasi kategori pertandingan
@@ -94,7 +94,9 @@ class OrderController extends Controller
                     'customer_name' => $validated['customer_name'],
                     'phone_number'  => $validated['phone_number'],
                     'school'        => $validated['school'],
-                    'level'         => $validated['level'], // <--- KOREKSI: Level selalu disimpan
+                    'level'         => $validated['level'],
+                    'birth_place'   => $validated['birth_place'],
+                    'birth_date'    => $validated['birth_date'],
                     'status'        => 'pending',
                 ];
 
@@ -102,8 +104,6 @@ class OrderController extends Controller
                 if ($eventTypeLower === 'pertandingan') {
                     $orderData['nik']               = $validated['nik'];
                     $orderData['kk']                = $validated['kk'];
-                    $orderData['birth_place']       = $validated['birth_place'];
-                    $orderData['birth_date']        = $validated['birth_date'];
                     $orderData['weight']            = $validated['weight'];
                     $orderData['competition_level'] = $validated['competition_level'];
                     $orderData['category']          = $validated['category'];

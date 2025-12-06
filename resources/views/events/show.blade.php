@@ -75,7 +75,8 @@
               <h2 class="text-xl font-semibold text-slate-900 dark:text-white">Deskripsi Event</h2>
               <div
                 class="prose prose-sm sm:prose-base mt-4 max-w-none text-slate-700 dark:text-slate-300 dark:prose-invert prose-a:text-blue-600 dark:prose-a:text-blue-400">
-                {!! nl2br(e($event->description)) !!}
+                {{-- {!! nl2br(e($event->description)) !!} --}}
+                {!! ($event->description) !!}
               </div>
             </div>
           @endif
