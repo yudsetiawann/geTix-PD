@@ -21,9 +21,18 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
+    // Mengubah label di Sidebar kiri
+    protected static ?string $navigationLabel = 'Anggota';
+
+    // Mengubah label singular (untuk tombol "New Ranting", dll)
+    protected static ?string $modelLabel = 'Anggota';
+
+    // Mengubah label plural (untuk judul tabel "Daftar Ranting")
+    protected static ?string $pluralModelLabel = 'Data Anggota';
+
     // protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-users';
-    protected static string|UnitEnum|null $navigationGroup = 'Manajemen Akses'; // Kelompokkan menu (opsional)
+    protected static string|UnitEnum|null $navigationGroup = 'Manajemen Anggota'; // Kelompokkan menu (opsional)
     protected static ?int $navigationSort = 1; // Urutan di sidebar
     protected static ?string $recordTitleAttribute = 'name';
 

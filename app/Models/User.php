@@ -3,14 +3,17 @@
 namespace App\Models;
 
 use Filament\Panel;
+use App\Models\Level;
+use App\Models\OrganizationPosition;
 use Illuminate\Notifications\Notifiable;
+// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Filament\Models\Contracts\FilamentUser;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 
-class User extends Authenticatable implements MustVerifyEmail, FilamentUser
+// class User extends Authenticatable implements MustVerifyEmail, FilamentUser
+class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
@@ -26,6 +29,19 @@ class User extends Authenticatable implements MustVerifyEmail, FilamentUser
         'role',
         'email',
         'password',
+        'nik',
+        'place_of_birth',
+        'date_of_birth',
+        'gender',
+        'phone_number',
+        'address',
+        'job',
+        'join_year',
+        'level_id',
+        'unit_id',
+        'verification_status',
+        'rejection_note',
+        'organization_position_id',
     ];
 
     /**
@@ -48,6 +64,7 @@ class User extends Authenticatable implements MustVerifyEmail, FilamentUser
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'date_of_birth' => 'date',
         ];
     }
 
@@ -69,6 +86,11 @@ class User extends Authenticatable implements MustVerifyEmail, FilamentUser
         return $this->role === 'admin';
     }
 
+    public function isCoach()
+    {
+        return $this->role === 'coach';
+    }
+
     public function isScanner(): bool
     {
         return $this->role === 'scanner';
@@ -77,8 +99,11 @@ class User extends Authenticatable implements MustVerifyEmail, FilamentUser
     // Filament Panel Access
     public function canAccessPanel(Panel $panel): bool
     {
-        // Izinkan admin atau scanner masuk ke panel
-        return $this->isAdmin() || $this->isScanner();
+        // Admin dan Coach bisa masuk panel admin
+        if ($panel->getId() === 'admin') {
+            return $this->isAdmin() || $this->isScanner();
+        }
+        return false;
     }
 
 
@@ -107,8 +132,48 @@ class User extends Authenticatable implements MustVerifyEmail, FilamentUser
 
     public function getFilamentName(): string
     {
-        // Ini akan menampilkan nama lengkap. 
+        // Ini akan menampilkan nama lengkap.
         // Jika ingin huruf kapital semua: return strtoupper($this->name);
         return $this->name;
+    }
+
+    // Relasi Atlet -> Unit
+    public function unit()
+    {
+        return $this->belongsTo(Unit::class);
+    }
+
+    // Relasi Pelatih -> Units (Many to Many)
+    public function coachedUnits()
+    {
+        return $this->belongsToMany(Unit::class, 'coach_unit');
+    }
+
+    // Relasi ke Level
+    public function level()
+    {
+        return $this->belongsTo(Level::class);
+    }
+
+    // Relasi langsung ke Jabatan
+    public function organizationPosition()
+    {
+        return $this->belongsTo(OrganizationPosition::class, 'organization_position_id');
+    }
+
+    // Helper untuk mengambil nama level (Safe Access)
+    public function getLevelNameAttribute()
+    {
+        return $this->level ? $this->level->name : '-';
+    }
+
+    /**
+     * Helper Generic untuk cek role (Memperbaiki error hasRole)
+     * @param string $role
+     * @return bool
+     */
+    public function hasRole($role)
+    {
+        return $this->role === $role;
     }
 }
