@@ -5,6 +5,14 @@
     </h1>
   </x-slot>
 
+  @php
+    // Ambil data user yang sedang login
+    $user = auth()->user();
+    // Ambil nama level/sabuk user (misal: "Dasar I")
+    $userLevelName = $user->level ? $user->level->name : '';
+    $userUnitName = $user->unit ? $user->unit->name : '-';
+  @endphp
+
   {{-- Kontainer Utama --}}
   <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
 
@@ -16,16 +24,16 @@
         levelPrices: {{ json_encode($levelPrices) ?? '{}' }},
         hasDynamicPricing: {{ $hasDynamicPricing ? 'true' : 'false' }},
 
-        // Input state
-        selectedLevel: '{{ old('level', '') }}', // Untuk Ujian
-        selectedCompetitionLevel: '{{ old('competition_level', '') }}', // Untuk Pertandingan (Usia Dini, dll)
-        selectedCategory: '{{ old('category', '') }}', // Untuk Pertandingan (Tanding, TGR)
-        quantity: 1, // Tetap 1
+        // Input state (Auto-fill dari Profile User)
+        selectedLevel: '{{ $userLevelName }}', // Otomatis terisi Sabuk User
+        selectedCompetitionLevel: '{{ old('competition_level', '') }}', // Editable
+        selectedCategory: '{{ old('category', '') }}', // Editable
+        quantity: 1,
 
         // Hasil Kalkulasi
         calculatedPrice: 0,
 
-        // Hitung harga berdasarkan tipe event dan input yang relevan
+        // Hitung harga
         calculatePrice() {
             if (!this.hasDynamicPricing) {
                 this.calculatedPrice = this.basePrice;
@@ -34,38 +42,22 @@
 
             let price = 0;
             if (this.eventType === 'ujian' && this.selectedLevel) {
-                // Kelompok 1: Pemula & Dasar I
+                // Logika Harga Ujian berdasarkan Sabuk User saat ini
                 if (['Pemula', 'Dasar I'].includes(this.selectedLevel)) {
                     price = this.levelPrices?.pemula_dasar1 ?? 0;
-                }
-
-                // Kelompok 2: Dasar II
-                else if (this.selectedLevel === 'Dasar II') {
+                } else if (this.selectedLevel === 'Dasar II') {
                     price = this.levelPrices?.dasar2 ?? 0;
-                }
-
-                // Kelompok 3: Cakel
-                else if (this.selectedLevel === 'Cakel') {
+                } else if (this.selectedLevel === 'Cakel') {
                     price = this.levelPrices?.cakel ?? 0;
-                }
-
-                // Kelompok 4: Putih
-                else if (this.selectedLevel === 'Putih') {
+                } else if (this.selectedLevel === 'Putih') {
                     price = this.levelPrices?.putih ?? 0;
-                }
-
-                // Kelompok 5: Putih Hijau
-                else if (this.selectedLevel === 'Putih Hijau') {
+                } else if (this.selectedLevel === 'Putih Hijau') {
                     price = this.levelPrices?.putih_hijau ?? 0;
-                }
-
-                // Kelompok 6: Hijau
-                else if (this.selectedLevel === 'Hijau') {
+                } else if (this.selectedLevel === 'Hijau') {
                     price = this.levelPrices?.hijau ?? 0;
                 }
             } else if (this.eventType === 'pertandingan' && this.selectedCategory) {
-                // Logika harga pertandingan (kategori)
-                const categoryKey = this.selectedCategory.toLowerCase().replace(' ', '_'); // 'Serang Hindar' -> 'serang_hindar'
+                const categoryKey = this.selectedCategory.toLowerCase().replace(' ', '_');
                 price = this.levelPrices?.[categoryKey] ?? 0;
             }
             this.calculatedPrice = price;
@@ -76,7 +68,7 @@
     }" x-init="calculatePrice()" class="mx-auto max-w-2xl">
       {{-- Akhir div x-data --}}
 
-      {{-- Tampilkan error --}}
+      {{-- Tampilkan error session --}}
       @if (session('error'))
         <div class="mb-6 rounded-xl border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/50">
           <div class="flex">
@@ -94,6 +86,8 @@
           </div>
         </div>
       @endif
+
+      {{-- Tampilkan validasi error --}}
       @if ($errors->any())
         <div class="mb-6 rounded-xl border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/50">
           <div class="flex">
@@ -151,106 +145,95 @@
         @csrf
         <input type="hidden" name="event_id" value="{{ $event->id }}">
 
-        {{-- Bagian 2: Detail Peserta --}}
+        {{-- Bagian 2: Detail Peserta (AUTO FILL FROM PROFILE) --}}
         <div
           class="overflow-hidden rounded-xl border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800">
           <div class="border-b border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-800/50 sm:px-6">
-            <h2 class="text-base font-semibold leading-6 text-slate-900 dark:text-white">Detail Peserta</h2>
+            <h2 class="text-base font-semibold leading-6 text-slate-900 dark:text-white">Detail Peserta (Sesuai Profil)
+            </h2>
           </div>
           <div class="space-y-6 p-4 sm:p-6">
-            {{-- Nama --}}
+
+            {{-- Nama (Read Only) --}}
             <div>
-              <label for="customer_name" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Nama
-                Lengkap</label>
-              <input type="text" name="customer_name" id="customer_name" required value="{{ old('customer_name') }}"
-                class="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-600 focus:ring-blue-600 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:border-blue-500">
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Nama Lengkap</label>
+              <input type="text" value="{{ $user->name }}" readonly
+                class="mt-1 block w-full cursor-not-allowed rounded-lg border-slate-200 bg-slate-100 text-slate-500 shadow-sm focus:border-slate-200 focus:ring-0 dark:border-slate-700 dark:bg-slate-900/50 dark:text-slate-400">
+              {{-- Hidden input jika controller membutuhkan, tapi idealnya controller pakai Auth::user() --}}
+              <input type="hidden" name="customer_name" value="{{ $user->name }}">
             </div>
 
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+              {{-- Tempat Lahir (Read Only) --}}
               <div>
-                <label for="birth_place" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tempat
-                  Lahir</label>
-                <input type="text" name="birth_place" id="birth_place" :required="eventType === 'pertandingan'"
-                  class="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-600 focus:ring-blue-600 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:border-blue-500">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tempat Lahir</label>
+                <input type="text" value="{{ $user->place_of_birth }}" readonly
+                  class="mt-1 block w-full cursor-not-allowed rounded-lg border-slate-200 bg-slate-100 text-slate-500 shadow-sm focus:border-slate-200 focus:ring-0 dark:border-slate-700 dark:bg-slate-900/50 dark:text-slate-400">
+                <input type="hidden" name="birth_place" value="{{ $user->place_of_birth }}">
               </div>
+              {{-- Tanggal Lahir (Read Only) --}}
               <div>
-                <label for="birth_date" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tanggal
-                  Lahir</label>
-                <input type="date" name="birth_date" id="birth_date" :required="eventType === 'pertandingan'"
-                  class="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-600 focus:ring-blue-600 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:border-blue-500">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tanggal Lahir</label>
+                <input type="text" value="{{ $user->date_of_birth ? $user->date_of_birth->format('d M Y') : '-' }}"
+                  readonly
+                  class="mt-1 block w-full cursor-not-allowed rounded-lg border-slate-200 bg-slate-100 text-slate-500 shadow-sm focus:border-slate-200 focus:ring-0 dark:border-slate-700 dark:bg-slate-900/50 dark:text-slate-400">
+                <input type="hidden" name="birth_date" value="{{ $user->date_of_birth }}">
               </div>
             </div>
-            <div x-show="eventType === 'pertandingan'" class="space-y-6">
 
-              {{-- NIK & KK --}}
-              <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                <div>
-                  <label for="nik" class="block text-sm font-medium text-gray-700 dark:text-gray-300">NIK</label>
-                  <input type="text" name="nik" id="nik" :required="eventType === 'pertandingan'"
-                    class="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-600 focus:ring-blue-600 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:border-blue-500">
-                </div>
-                <div>
-                  <label for="kk" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nomor
-                    KK</label>
-                  <input type="text" name="kk" id="kk" :required="eventType === 'pertandingan'"
-                    class="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-600 focus:ring-blue-600 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:border-blue-500">
-                </div>
+            <div x-show="eventType === 'pertandingan'" class="space-y-6">
+              {{-- NIK (Read Only) --}}
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">NIK</label>
+                <input type="text" value="{{ $user->nik }}" readonly
+                  class="mt-1 block w-full cursor-not-allowed rounded-lg border-slate-200 bg-slate-100 text-slate-500 shadow-sm focus:border-slate-200 focus:ring-0 dark:border-slate-700 dark:bg-slate-900/50 dark:text-slate-400">
+                <input type="hidden" name="nik" value="{{ $user->nik }}">
               </div>
 
-              {{-- TTL & Berat Badan --}}
+              {{-- Berat Badan (EDITABLE - Exception) --}}
               <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
-
                 <div>
                   <label for="weight" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Berat
                     Badan (Kg)</label>
                   <input type="number" name="weight" id="weight" :required="eventType === 'pertandingan'"
-                    class="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-600 focus:ring-blue-600 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:border-blue-500">
+                    class="mt-1 block w-full rounded-lg border-slate-300 bg-white shadow-sm focus:border-blue-600 focus:ring-blue-600 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:border-blue-500">
                 </div>
               </div>
             </div>
-            {{-- No. Telp --}}
+
+            {{-- No. Telp (Read Only) --}}
             <div>
-              <label for="phone_number" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Nomor
-                Telepon</label>
-              <input type="tel" name="phone_number" id="phone_number" required
-                value="{{ old('phone_number') }}"
-                class="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-600 focus:ring-blue-600 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:border-blue-500"
-                placeholder="Contoh: 08123456789">
-            </div>
-            {{-- Ranting --}}
-            <div>
-              <label for="school" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Ranting /
-                Sekolah</label>
-              <input type="text" name="school" id="school" required value="{{ old('school') }}"
-                class="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-600 focus:ring-blue-600 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:border-blue-500">
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Nomor Telepon</label>
+              <input type="text" value="{{ $user->phone_number }}" readonly
+                class="mt-1 block w-full cursor-not-allowed rounded-lg border-slate-200 bg-slate-100 text-slate-500 shadow-sm focus:border-slate-200 focus:ring-0 dark:border-slate-700 dark:bg-slate-900/50 dark:text-slate-400">
+              <input type="hidden" name="phone_number" value="{{ $user->phone_number }}">
             </div>
 
+            {{-- Ranting / Unit (Read Only) --}}
+            <div>
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Ranting / Sekolah</label>
+              <input type="text" value="{{ $userUnitName }}" readonly
+                class="mt-1 block w-full cursor-not-allowed rounded-lg border-slate-200 bg-slate-100 text-slate-500 shadow-sm focus:border-slate-200 focus:ring-0 dark:border-slate-700 dark:bg-slate-900/50 dark:text-slate-400">
+              <input type="hidden" name="school" value="{{ $userUnitName }}">
+            </div>
 
             {{-- Bagian Grid Dinamis --}}
-            {{-- Perubahan 1: Menggunakan :class untuk mengatur kolom berdasarkan eventType --}}
             <div class="grid gap-6"
               :class="eventType === 'pertandingan' ? 'grid-cols-1 sm:grid-cols-3' : 'grid-cols-1'">
 
-              {{-- 1. Dropdown Tingkatan SABUK --}}
-              {{-- Selalu muncul, akan mengambil 1/3 lebar jika pertandingan, atau full jika ujian --}}
+              {{-- 1. Tingkatan SABUK (Read Only from Profile) --}}
               <div>
-                <label for="level" class="block text-sm font-medium text-slate-700 dark:text-slate-300">
-                  Tingkatan
+                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">
+                  Tingkatan (Sabuk)
                 </label>
-                <select name="level" id="level" required x-model="selectedLevel"
-                  x-on:change="calculatePrice()"
-                  class="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-600 focus:ring-blue-600 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:border-blue-500">
-                  <option value="" disabled>-- Pilih Tingkatan --</option>
-                  @php $levels = ['Pemula', 'Dasar I', 'Dasar II', 'Cakel', 'Putih', 'Putih Hijau', 'Hijau']; @endphp
-                  @foreach ($levels as $levelOption)
-                    <option value="{{ $levelOption }}" @selected(old('level') == $levelOption)>{{ $levelOption }}</option>
-                  @endforeach
-                </select>
+                {{-- Tampilan Read-only --}}
+                <input type="text" value="{{ $userLevelName }}" readonly
+                  class="mt-1 block w-full cursor-not-allowed rounded-lg border-slate-200 bg-slate-100 text-slate-500 shadow-sm focus:border-slate-200 focus:ring-0 dark:border-slate-700 dark:bg-slate-900/50 dark:text-slate-400">
+                {{-- Hidden input untuk dikirim ke backend/kalkulasi --}}
+                <input type="hidden" name="level" x-model="selectedLevel">
               </div>
 
-              {{-- Perubahan 2: Menghapus wrapper div agar input ini menjadi direct child dari grid --}}
-
-              {{-- 2. Tingkat (Usia) - Hanya muncul jika pertandingan --}}
+              {{-- 2. Tingkat (Usia) - EDITABLE (Exception) --}}
               <div x-show="eventType === 'pertandingan'">
                 <label for="competition_level" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Tingkat (Usia)
@@ -266,7 +249,7 @@
                 </select>
               </div>
 
-              {{-- 3. Kategori - Hanya muncul jika pertandingan --}}
+              {{-- 3. Kategori - EDITABLE (Exception) --}}
               <div x-show="eventType === 'pertandingan'">
                 <label for="category" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Kategori
@@ -282,8 +265,7 @@
                 </select>
               </div>
 
-              {{-- 4. KELAS TANDING (Khusus) --}}
-              {{-- Kita gunakan col-span-full agar jika dia muncul, dia mengambil lebar penuh di baris baru --}}
+              {{-- 4. KELAS TANDING - EDITABLE (Exception) --}}
               <div x-show="selectedCategory === 'Tanding'" class="sm:col-span-full">
                 <label for="class" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Kelas Tanding
@@ -307,11 +289,10 @@
               </div>
             </div>
 
-            {{-- Kuota (jika tidak ada pilihan dinamis) --}}
+            {{-- Kuota Info --}}
             <div x-show="eventType !== 'ujian' && eventType !== 'pertandingan'">
               <p class="text-sm text-slate-600 dark:text-slate-400">Tiket standar untuk event ini.</p>
             </div>
-
             <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">Sisa kuota: {{ $event->ticket_quota }}</p>
           </div>
         </div>

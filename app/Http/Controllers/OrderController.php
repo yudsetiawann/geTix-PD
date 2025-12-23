@@ -18,58 +18,48 @@ class OrderController extends Controller
         if ($event->ticket_quota <= 0) {
             return redirect()->route('events.show', $event)->with('error', 'Maaf, tiket untuk event ini sudah habis.');
         }
+
+        $user = Auth::user();
+        if (!$user) {
+            return redirect()->route('login');
+        }
+
         return view('orders.create', [
             'event' => $event,
             'levelPrices' => $event->level_prices,
             'hasDynamicPricing' => $event->has_dynamic_pricing,
             'eventType' => $event->event_type,
+            'user' => $user,
         ]);
     }
 
     public function store(Request $request, Event $event, MidtransService $midtrans)
     {
-        // 1. Validasi Input
-        $baseRules = [
-            'customer_name' => 'required|string|min:3',
-            'phone_number'  => 'required|string|min:10',
-            'school'        => 'required|string|min:3',
-        ];
-
-        $dynamicRules = [];
+        $user = Auth::user();
+        $rules = [];
         $eventTypeLower = strtolower($event->event_type);
-
-        // KOREKSI: Tambahkan validasi level untuk SEMUA tipe event (Ujian & Pertandingan)
-        // Karena di blade Anda, dropdown 'level' selalu muncul.
-        $dynamicRules['level'] = 'required|string';
-        $dynamicRules['birth_place']    = 'required|string';
-        $dynamicRules['birth_date']     = 'required|date';
+        $userLevelName = $user->level ? $user->level->name : null;
 
         if ($eventTypeLower === 'pertandingan') {
-            // Validasi data pribadi atlet
-            $dynamicRules['nik']            = 'required|numeric|digits:16';
-            $dynamicRules['kk']             = 'required|numeric|digits:16';
-            $dynamicRules['weight']         = 'required|integer|min:10';
-
-            // Validasi kategori pertandingan
-            $dynamicRules['competition_level'] = 'required|string';
-            $dynamicRules['category']          = 'required|string';
+            $rules['weight']            = 'required|integer|min:10';
+            $rules['competition_level'] = 'required|string';
+            $rules['category']          = 'required|string';
 
             if ($request->input('category') === 'Tanding') {
-                $dynamicRules['class'] = 'required|string';
+                $rules['class'] = 'required|string';
             }
         }
 
-        $validated = $request->validate(array_merge($baseRules, $dynamicRules));
+        $validated = $request->validate($rules);
 
-        // 2. Hitung Harga & Cek Kuota
         $quantity = 1;
-        $levelForPrice    = $validated['level'] ?? null;
+        $levelForPrice    = $userLevelName;
         $categoryForPrice = $validated['category'] ?? null;
 
         $pricePerTicket = $event->getPrice($levelForPrice, $categoryForPrice);
 
         if ($pricePerTicket === null) {
-            return back()->withInput()->with('error', 'Kombinasi tingkatan/kategori tidak valid atau harga tidak ditemukan.');
+            return back()->withInput()->with('error', 'Harga tidak ditemukan untuk tingkat sabuk/kategori Anda.');
         }
 
         $totalPrice = $pricePerTicket * $quantity;
@@ -78,32 +68,29 @@ class OrderController extends Controller
             return back()->withInput()->with('error', 'Maaf, sisa kuota tiket tidak mencukupi.');
         }
 
-        // 3. Proses Database & Midtrans
         try {
-            $order = DB::transaction(function () use ($validated, $event, $midtrans, $totalPrice, $quantity, $pricePerTicket, $eventTypeLower, $request) {
+            $order = DB::transaction(function () use ($request, $validated, $event, $midtrans, $totalPrice, $quantity, $pricePerTicket, $eventTypeLower, $user, $userLevelName) {
 
                 $orderCode = 'ORD-' . now()->timestamp . '-' . $event->id;
 
-                // Data dasar (Termasuk LEVEL yang sekarang wajib disimpan)
                 $orderData = [
                     'event_id'      => $event->id,
-                    'user_id'       => Auth::id(),
+                    'user_id'       => $user->id,
                     'order_code'    => $orderCode,
                     'quantity'      => $quantity,
                     'total_price'   => $totalPrice,
-                    'customer_name' => $validated['customer_name'],
-                    'phone_number'  => $validated['phone_number'],
-                    'school'        => $validated['school'],
-                    'level'         => $validated['level'],
-                    'birth_place'   => $validated['birth_place'],
-                    'birth_date'    => $validated['birth_date'],
                     'status'        => 'pending',
+                    'customer_name' => $user->name,
+                    'phone_number'  => $user->phone_number,
+                    'school'        => $user->unit ? $user->unit->name : '-',
+                    'level'         => $userLevelName,
+                    'birth_place'   => $user->place_of_birth,
+                    'birth_date'    => $user->date_of_birth,
                 ];
 
-                // Data Spesifik Pertandingan
                 if ($eventTypeLower === 'pertandingan') {
-                    $orderData['nik']               = $validated['nik'];
-                    $orderData['kk']                = $validated['kk'];
+                    $orderData['nik'] = $user->nik;
+                    $orderData['kk']  = $user->kk ?? null;
                     $orderData['weight']            = $validated['weight'];
                     $orderData['competition_level'] = $validated['competition_level'];
                     $orderData['category']          = $validated['category'];
@@ -115,12 +102,9 @@ class OrderController extends Controller
 
                 $order = Order::create($orderData);
 
-                // 4. Integrasi Midtrans
                 $itemName = 'Tiket ' . $event->title;
-
-                // Format Nama Item: Tiket Event (Level - Kategori - Kelas)
                 $details = [];
-                if (!empty($validated['level'])) $details[] = $validated['level'];
+                if ($userLevelName) $details[] = $userLevelName;
                 if (!empty($validated['competition_level'])) $details[] = $validated['competition_level'];
                 if (!empty($validated['category'])) $details[] = $validated['category'];
                 if (!empty($orderData['class'])) $details[] = $orderData['class'];
@@ -141,11 +125,11 @@ class OrderController extends Controller
                         'name'     => substr($itemName, 0, 50)
                     ]],
                     'customer_details' => [
-                        'first_name' => $order->customer_name,
-                        'phone'      => $order->phone_number,
-                        'email'      => Auth::user()->email
+                        'first_name' => $user->name,
+                        'phone'      => $user->phone_number,
+                        'email'      => $user->email
                     ],
-                    'enabled_payments' => ['bca_va', 'echannel', 'gopay', 'shopeepay', 'qris']
+                    'enabled_payments' => ['bca_va', 'echannel', 'gopay', 'shopeepay', 'qris', 'other_qris']
                 ];
 
                 $snap = $midtrans->createTransaction($params);
@@ -161,8 +145,37 @@ class OrderController extends Controller
                 'line' => $e->getLine()
             ]);
 
-            // Kembalikan ke mode error sopan (bukan dd)
             return back()->withInput()->with('error', 'Terjadi kesalahan sistem. Silakan coba lagi.');
         }
+    }
+
+    /**
+     * Menangani pembayaran tunai/kolektif.
+     */
+    public function payCash(Order $order)
+    {
+        // 1. Validasi Kepemilikan Order
+        if ($order->user_id !== Auth::id()) {
+            abort(403, 'Anda tidak memiliki akses ke pesanan ini.');
+        }
+
+        // 2. Cek Status Order (Hanya pending yang bisa diubah)
+        if ($order->status !== 'pending') {
+            return redirect()->route('my-tickets.index')
+                ->with('error', 'Status pesanan tidak valid untuk pembayaran tunai.');
+        }
+
+        // 3. Update Order
+        // Kita kosongkan token midtrans untuk menandakan ini bukan transaksi online lagi.
+        // Status tetap 'pending', tapi user diarahkan untuk bayar manual.
+        $order->update([
+            'midtrans_token' => null,
+            // Jika Anda memiliki kolom 'payment_method', uncomment baris di bawah:
+            // 'payment_method' => 'cash_manual',
+        ]);
+
+        // 4. Redirect ke Halaman Tiket dengan pesan sukses
+        return redirect()->route('my-tickets.index')
+            ->with('success', 'Metode pembayaran Tunai/Kolektif dipilih. Silakan lakukan pembayaran ke Koordinator Cabang/Pelatih untuk verifikasi.');
     }
 }
