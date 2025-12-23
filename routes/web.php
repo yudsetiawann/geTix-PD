@@ -1,17 +1,21 @@
 <?php
 
+use App\Livewire\Coach\AthleteList;
+use App\Livewire\PublicAthleteList;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
+use App\Livewire\Coach\AthleteVerification;
 use App\Http\Controllers\MidtransController;
+use App\Livewire\PublicOrganizationStructure;
 use App\Http\Controllers\CertificateController;
 
 /*
 |--------------------------------------------------------------------------
-| Rute Publik (Bisa diakses Guest & User Belum Terverifikasi)
+| Rute Publik
 |--------------------------------------------------------------------------
 */
 
@@ -21,24 +25,15 @@ Route::get('/', function () {
 
 Route::get('/events', [EventController::class, 'index'])->name('events.index');
 Route::get('/events/{event:slug}', [EventController::class, 'show'])->name('events.show');
+Route::get('/daftar-anggota', PublicAthleteList::class)->name('public.athletes');
+Route::get('/struktur-organisasi', PublicOrganizationStructure::class)->name('public.structure');
 
-/*
-|--------------------------------------------------------------------------
-| Rute Autentikasi Bawaan Breeze
-|--------------------------------------------------------------------------
-*/
-// Rute seperti login, register, forgot-password, dan halaman verifikasi email
 require __DIR__ . '/auth.php';
 
 /*
 |--------------------------------------------------------------------------
-| Rute yang Memerlukan Login & Verifikasi Email
+| Rute Auth (Login Required)
 |--------------------------------------------------------------------------
-|
-| Middleware 'auth' memastikan user harus login.
-| Middleware 'verified' memastikan user harus sudah verifikasi email.
-| Jika belum verifikasi, user akan otomatis diarahkan ke halaman 'verify-email'.
-|
 */
 Route::middleware(['auth', 'verified'])->group(function () {
 
@@ -46,7 +41,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return view('dashboard');
     })->name('dashboard');
 
-    // Profil (Breeze)
+    // Profil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -58,6 +53,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Pembayaran
     Route::get('/my-checkout/{order}/pay', [PaymentController::class, 'show'])->name('orders.payment');
 
+    // [BARU] Route untuk Pembayaran Tunai
+    Route::post('/my-checkout/{order}/pay-cash', [OrderController::class, 'payCash'])->name('orders.pay-cash');
+
     // Tiket Saya
     Route::get('/my-receipts', [TicketController::class, 'index'])->name('my-tickets.index');
     Route::get('/my-receipts/{order}/show', [TicketController::class, 'show'])->name('tickets.show');
@@ -66,11 +64,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Sertifikat
     Route::get('/certificates/{order}/download', [CertificateController::class, 'download'])->name('certificates.download');
+
+    // Route Khusus Coach
+    Route::get('/coach/verification', AthleteVerification::class)->name('coach.verification');
+    Route::get('/coach/athletes', AthleteList::class)->name('coach.athletes');
 });
 
 /*
 |--------------------------------------------------------------------------
-| Rute Webhook (Publik & Tanpa CSRF)
+| Webhook
 |--------------------------------------------------------------------------
 */
 Route::post('/midtrans/notification', [MidtransController::class, 'notificationHandler'])->name('midtrans.notification');
