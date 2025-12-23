@@ -41,7 +41,7 @@ class AdminPanelProvider extends PanelProvider
             ->viteTheme('resources/css/filament/admin/theme.css')
             // ->login()
             ->brandLogo(new HtmlString(view('filament.app-logo')->render()))
-            ->brandName('E-Tick PD')
+            ->brandName('PD-dig')
             ->favicon(asset('img/Icon-PD.png'))
             // ->topNavigation()
             // --- PERUBAHAN DI SINI (USER MENU) ---
@@ -81,7 +81,7 @@ class AdminPanelProvider extends PanelProvider
                     ->url(fn() => route('home'))
                     ->icon('heroicon-o-arrow-uturn-left')
                     ->group('Navigasi')
-                    ->sort(1),
+                    ->sort(999),
             ])
             ->middleware([
                 EncryptCookies::class,
