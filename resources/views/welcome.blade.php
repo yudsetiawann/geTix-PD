@@ -171,7 +171,7 @@
       </h1>
       <p
         class="mt-6 text-lg md:text-xl text-slate-200 max-w-3xl mx-auto shadow-black/50 [text-shadow:0_1px_4px_var(--tw-shadow-color)]">
-        Ekosistem digital resmi untuk anggota, event, informasi, dan kebutuhan Persaudaraan Perisai Diri.
+        Ekosistem digital resmi untuk anggota, event, informasi, dan kebutuhan Keluarga Silat Nasional Indonesia Perisai Diri Cabang Kabupaten Tasikmalaya.
       </p>
       <div class="mt-10">
         <a href="/events"
