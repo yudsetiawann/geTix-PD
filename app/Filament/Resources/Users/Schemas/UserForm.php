@@ -2,16 +2,18 @@
 
 namespace App\Filament\Resources\Users\Schemas;
 
+use Filament\Actions\Action;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Hash;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\DatePicker; // Tambahan
 use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Grid;     // Tambahan
 use Illuminate\Validation\Rules\Password;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Forms\Components\DatePicker; // Tambahan
+use Filament\Schemas\Components\Grid;     // Tambahan
 
 class UserForm
 {
@@ -67,8 +69,11 @@ class UserForm
                         Grid::make(2)->schema([
                             TextInput::make('nik')
                                 ->label('NIK')
-                                ->numeric()
+                                ->regex('/^[0-9]+$/') // Hanya izinkan angka 0-9
                                 ->length(16)
+                                ->validationMessages([
+                                    'regex' => 'NIK hanya boleh berisi angka.',
+                                ])
                                 ->unique(ignoreRecord: true),
 
                             TextInput::make('phone_number')
@@ -108,9 +113,49 @@ class UserForm
                     ->icon('heroicon-o-academic-cap')
                     ->schema([
                         Grid::make(2)->schema([
+                            TextInput::make('nia')
+                                ->label('Nomor Induk Anggota (NIA)')
+                                // 1. Kunci field agar tidak bisa diketik langsung (mencegah typo tidak sengaja)
+                                ->readOnly()
+
+                                // 2. Tambahkan tombol aksi di ujung kanan input
+                                ->suffixAction(
+                                    Action::make('force_edit_nia')
+                                        ->icon('heroicon-m-pencil-square')
+                                        ->color('warning') // Warna kuning menandakan "Hati-hati"
+                                        ->tooltip('Ubah NIA secara manual (Khusus Admin)')
+
+                                        // 3. INI POP-UP KONFIRMASINYA
+                                        ->requiresConfirmation()
+                                        ->modalHeading('Ubah NIA Manual')
+                                        ->modalDescription('PERHATIAN: NIA dihasilkan otomatis oleh sistem berdasarkan urutan. Mengubahnya secara manual berisiko menyebabkan duplikasi atau ketidaksesuaian data. Apakah Anda yakin?')
+                                        ->modalSubmitActionLabel('Ya, Saya Yakin')
+
+                                        // 4. Form input di dalam Pop-up
+                                        ->fillForm(fn($record) => ['new_nia' => $record?->nia])
+                                        ->form([
+                                            TextInput::make('new_nia')
+                                                ->label('Masukkan NIA Baru')
+                                                ->required()
+                                                ->maxLength(20)
+                                                ->helperText('Pastikan format sesuai: YYYY + DDMMYYYY + XXXX'),
+                                        ])
+
+                                        // 5. Eksekusi perubahan nilai ke form utama
+                                        ->action(function (Set $set, array $data) {
+                                            $set('nia', $data['new_nia']);
+                                        })
+                                )
+                                // Pastikan tetap divalidasi unique ke database saat form utama disimpan
+                                ->unique(table: 'users', column: 'nia', ignoreRecord: true)
+                                ->maxLength(20)
+                                // PENTING: dehydrated true agar nilai yang di-set manual ikut tersimpan ke DB
+                                ->dehydrated(true)
+                                ->columnSpanFull(),
+
                             // Level / Sabuk (Relasi ke tabel levels)
                             Select::make('level_id')
-                                ->label('Tingkatan / Sabuk')
+                                ->label('Tingkatan')
                                 ->relationship('level', 'name', fn($query) => $query->orderBy('order', 'asc'))
                                 ->searchable()
                                 ->preload(),

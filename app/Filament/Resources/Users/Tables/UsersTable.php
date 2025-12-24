@@ -8,6 +8,7 @@ use Filament\Actions\EditAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Support\Enums\FontFamily;
 use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -29,8 +30,20 @@ class UsersTable
                     ->description(fn($record) => $record->role === 'coach' ? 'Pelatih' : ($record->nik ?? '-'))
                     ->icon('heroicon-m-user-circle'),
 
-                // Role Badge
-                TextColumn::make('role')
+            // [TAMBAHAN BARU] Kolom NIA
+            TextColumn::make('nia')
+                ->label('NIA')
+                ->copyable() // Fitur copy yang sangat berguna untuk Admin
+                ->copyMessage('NIA disalin')
+                ->searchable() // Agar admin bisa cari member by NIA
+                ->sortable()
+                ->fontFamily(FontFamily::Mono) // Agar angka terlihat tegas seperti kodingan
+                ->placeholder('Belum ada')
+                ->color(fn($state) => $state ? 'primary' : 'gray')
+                ->weight(FontWeight::Bold),
+
+            // Role Badge
+            TextColumn::make('role')
                     ->badge()
                     ->formatStateUsing(fn(string $state): string => ucfirst($state))
                     ->colors([
