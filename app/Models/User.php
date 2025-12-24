@@ -4,9 +4,10 @@ namespace App\Models;
 
 use Filament\Panel;
 use App\Models\Level;
+use App\Models\UserVerification;
 use App\Models\OrganizationPosition;
-use Illuminate\Notifications\Notifiable;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Notifications\Notifiable;
 use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -24,6 +25,7 @@ class User extends Authenticatable implements FilamentUser
      * @var list<string>
      */
     protected $fillable = [
+        'nia',
         'name',
         'username',
         'role',
@@ -166,6 +168,36 @@ class User extends Authenticatable implements FilamentUser
     {
         return $this->level ? $this->level->name : '-';
     }
+
+    // Relasi ke history verifikasi
+    public function verifications()
+    {
+        return $this->hasMany(UserVerification::class)->latest();
+    }
+
+    // Helper untuk mengambil verifikasi terakhir
+    public function latestVerification()
+    {
+        return $this->hasOne(UserVerification::class)->latestOfMany();
+    }
+
+    /**
+     * Daftar kolom yang jika berubah, mempengaruhi status verifikasi.
+     * Sesuaikan dengan form profile Anda.
+     */
+    public const VERIFIABLE_ATTRIBUTES = [
+        'name',
+        'nik',
+        'place_of_birth',
+        'date_of_birth',
+        'gender',
+        // 'address',
+        // 'job',
+        'unit_id',   // Unit latihan
+        'level_id',  // Tingkatan sabuk
+        'join_year',
+        // 'phone_number' // Opsional: mau pending ulang kalau ganti HP? Jika ya, masukkan.
+    ];
 
     /**
      * Helper Generic untuk cek role (Memperbaiki error hasRole)
