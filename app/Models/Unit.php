@@ -15,6 +15,11 @@ class Unit extends Model
         return $this->hasMany(User::class);
     }
 
+    public function users(): HasMany
+    {
+        return $this->hasMany(User::class);
+    }
+
     // Relasi ke pelatih
     // public function coaches()
     // {
