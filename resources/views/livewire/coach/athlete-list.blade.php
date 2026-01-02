@@ -1,4 +1,4 @@
-<div class="py-12 px-5">
+<div class="py-12">
   <div class="pt-8 px-5 max-w-7xl mx-auto sm:px-6 lg:px-8">
 
     {{-- LOGIC UTAMA: TAMPILAN UNIT LIST vs ATLET LIST --}}
@@ -11,7 +11,7 @@
           Pilih Unit Latihan
         </h2>
         <p class="text-sm text-gray-500 dark:text-gray-400">
-          Silakan pilih unit di bawah ini untuk melihat daftar atlet.
+          Silakan pilih unit di bawah ini untuk melihat daftar anggota.
         </p>
       </div>
 
@@ -41,7 +41,7 @@
 
             <div
               class="bg-gray-50 dark:bg-gray-700/50 px-6 py-3 border-t border-gray-100 dark:border-gray-700 flex items-center justify-between">
-              <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Total Atlet Aktif</span>
+              <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Total Anggota Aktif</span>
               <span
                 class="inline-flex items-center justify-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
                 {{ $unit->active_athletes_count }} Orang
@@ -78,19 +78,19 @@
           </button>
         </div>
 
-        <div class="flex flex-col sm:flex-row justify-between items-end sm:items-center gap-4">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <h2 class="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
               Unit: {{ $selectedUnitName }}
             </h2>
             <p class="text-sm text-gray-500 dark:text-gray-400">
-              Daftar atlet aktif di unit ini.
+              Daftar anggota aktif di unit ini.
             </p>
           </div>
 
           {{-- Search Input (Hanya mencari di unit ini) --}}
           <div class="relative w-full sm:w-64">
-            <input wire:model.live.debounce.300ms="search" type="text" placeholder="Cari atlet di unit ini..."
+            <input wire:model.live.debounce.300ms="search" type="text" placeholder="Cari anggota di unit ini..."
               class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white text-sm">
             <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
               <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -109,7 +109,7 @@
           <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead class="bg-gray-50 dark:bg-gray-700">
               <tr>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Atlet
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Anggota
                 </th>
                 {{-- Kolom Unit Latihan dihapus/hidden karena sudah difilter per unit --}}
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tingkatan
@@ -167,7 +167,7 @@
                 <tr>
                   <td colspan="4" class="px-6 py-10 text-center text-sm text-gray-500">
                     <div class="flex flex-col items-center justify-center">
-                      <p>Tidak ada atlet yang ditemukan di unit ini.</p>
+                      <p>Tidak ada anggota yang ditemukan di unit ini.</p>
                     </div>
                   </td>
                 </tr>
