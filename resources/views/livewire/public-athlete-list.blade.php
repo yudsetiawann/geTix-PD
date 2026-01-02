@@ -1,82 +1,105 @@
-<div class="py-12 min-h-screen">
-  <div class="pt-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="py-12 px-5">
+  <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
-    {{-- Header & Search --}}
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+    {{-- Header & Breadcrumb Dinamis --}}
+    <div class="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
       <div>
-        <h2 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
-          Daftar Anggota Resmi
+        <h2 class="text-2xl font-bold text-slate-900 dark:text-white">
+          {{ $pageTitle ?? 'Daftar Anggota' }}
         </h2>
-        <p class="mt-1 text-gray-500 dark:text-gray-400">
-          Cari data anggota aktif Perisai Diri berdasarkan nama atau unit latihan.
-        </p>
+
+        {{-- Breadcrumb Navigasi --}}
+        <nav class="flex text-sm text-slate-500 dark:text-slate-400 mt-1" aria-label="Breadcrumb">
+          <ol class="flex items-center space-x-2">
+            <li><a href="{{ route('public.menu') }}" class="hover:text-blue-600">Direktori</a></li>
+            <li><span class="text-slate-400">/</span></li>
+
+            @if (isset($unit) && $unit->exists)
+              <li><a href="{{ route('public.units') }}" class="hover:text-blue-600">Ranting</a></li>
+              <li><span class="text-slate-400">/</span></li>
+              <li class="font-medium text-slate-900 dark:text-white">{{ $unit->name }}</li>
+            @else
+              <li class="font-medium text-slate-900 dark:text-white">Semua Anggota</li>
+            @endif
+          </ol>
+        </nav>
       </div>
 
-      <div class="relative w-full md:w-96">
-        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+      {{-- Search Input --}}
+      <div class="relative w-full md:w-64">
+        <input wire:model.live.debounce.300ms="search" type="text" placeholder="Cari nama / NIA..."
+          class="w-full rounded-lg border-slate-300 pl-10 text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-800 dark:border-slate-700 dark:text-white">
+        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+          <svg class="h-4 w-4 text-slate-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+            fill="currentColor">
             <path fill-rule="evenodd"
               d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
               clip-rule="evenodd" />
           </svg>
         </div>
-        {{-- Input Search Real-time --}}
-        <input wire:model.live.debounce.300ms="search" type="text"
-          class="block w-full pl-10 pr-3 py-2.5 border border-gray-300 dark:border-gray-700 rounded-lg leading-5 bg-white dark:bg-slate-900 text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm shadow-sm transition duration-150 ease-in-out"
-          placeholder="Cari nama atau unit...">
-        {{-- Loading Indicator (Optional) --}}
-        <div wire:loading class="absolute inset-y-0 right-0 top-2 pr-3 flex items-center">
-          <svg class="animate-spin h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none"
-            viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
-            </circle>
-            <path class="opacity-75" fill="currentColor"
-              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-            </path>
-          </svg>
-        </div>
       </div>
     </div>
 
-    {{-- Content Grid --}}
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      @forelse ($athletes as $athlete)
-        <div
-          class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-6 flex items-center space-x-4 hover:shadow-md transition-shadow duration-300">
-          {{-- Avatar Inisial --}}
-          <div class="shrink-0">
-            <div
-              class="h-12 w-12 rounded-full bg-linear-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-lg shadow-lg">
-              {{ substr($athlete->name, 0, 2) }}
-            </div>
-          </div>
+    {{-- Grid / List Atlet --}}
+    @if ($athletes->isEmpty())
+      <div
+        class="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-12 text-center dark:border-slate-700 dark:bg-slate-800/50">
+        <svg class="mx-auto h-12 w-12 text-slate-400" xmlns="http://www.w3.org/2000/svg" fill="none"
+          viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
+        </svg>
+        <h3 class="mt-2 text-sm font-semibold text-slate-900 dark:text-white">Tidak ada anggota ditemukan</h3>
+        <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Coba ubah kata kunci pencarian atau filter Anda.</p>
+      </div>
+    @else
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        @foreach ($athletes as $athlete)
+          <div
+            class="group relative flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-all hover:border-blue-500 hover:shadow-md dark:border-slate-700 dark:bg-slate-800">
 
-          {{-- Info Anggota --}}
-          <div class="min-w-0 flex-1">
-            <p class="text-base font-semibold text-gray-900 dark:text-white truncate">
-              {{ $athlete->name }}
-            </p>
-            <div class="flex flex-col mt-1">
-              {{-- Menampilkan Unit --}}
-              <div class="flex items-center text-sm text-gray-500 dark:text-gray-400">
-                <svg class="h-4 w-4 text-gray-400 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
-                  </path>
-                </svg>
-                <span class="truncate">{{ $athlete->unit->name ?? 'Tanpa Unit' }}</span>
+            {{-- Badge Level/Sabuk --}}
+            <div class="absolute right-3 top-3">
+              <span
+                class="inline-flex items-center rounded-full bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10 dark:bg-blue-900/30 dark:text-blue-400">
+                {{ $athlete->level->name ?? 'Anggota' }}
+              </span>
+            </div>
+
+            <div class="p-6">
+              {{-- Avatar / Inisial --}}
+              <div
+                class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-lg font-bold text-slate-600 dark:bg-slate-700 dark:text-slate-300">
+                {{ strtoupper(substr($athlete->name, 0, 2)) }}
+              </div>
+
+              <h3 class="text-base font-semibold text-slate-900 dark:text-white group-hover:text-blue-600">
+                {{ $athlete->name }}
+              </h3>
+
+              <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                NIA: {{ $athlete->nia ?? '-' }}
+              </p>
+
+              <div class="mt-4 border-t border-slate-100 pt-4 dark:border-slate-700">
+                <div class="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+                  <svg class="h-4 w-4 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                    stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+                  </svg>
+                  <span class="line-clamp-1">{{ $athlete->unit->name ?? 'Unit tidak diketahui' }}</span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      @empty
-        {{-- Empty State --}}
-      @endforelse
-    </div>
+        @endforeach
+      </div>
 
-    {{-- Pagination --}}
-    <div class="mt-8">
-      {{ $athletes->links() }}
-    </div>
+      <div class="mt-6">
+        {{ $athletes->links() }}
+      </div>
+    @endif
   </div>
 </div>

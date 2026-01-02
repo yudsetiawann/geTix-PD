@@ -1,5 +1,5 @@
-<div class="py-12">
-  <div class="pt-8 max-w-7xl mx-auto sm:px-6 lg:px-8">
+<div class="py-12 px-5">
+  <div class="pt-8 px-5 max-w-7xl mx-auto sm:px-6 lg:px-8">
 
     {{-- LOGIC UTAMA: TAMPILAN UNIT LIST vs ATLET LIST --}}
 

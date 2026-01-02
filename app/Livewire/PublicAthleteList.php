@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\User;
+use App\Models\Unit;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\Attributes\Layout;
@@ -12,10 +13,29 @@ class PublicAthleteList extends Component
 {
     use WithPagination;
 
-    // Properti untuk search binding
     public $search = '';
+    public ?Unit $unit = null;
 
-    // Reset pagination saat user mengetik search agar tidak error page
+    // HAPUS "Unit" atau "?Unit" dari argumen di sini
+    // Ubah menjadi variabel biasa ($unit = null)
+    public function mount($unit = null)
+    {
+        // 1. Jika rute '/ranting/{unit}' diakses, Laravel/Livewire
+        // secara otomatis mengubah parameter menjadi instance Model Unit.
+        if ($unit instanceof Unit) {
+            $this->unit = $unit;
+        }
+        // 2. Jaga-jaga jika yang masuk adalah ID (integer/string)
+        elseif (is_numeric($unit)) {
+            $this->unit = Unit::find($unit);
+        }
+        // 3. Jika rute '/semua' diakses, $unit akan null atau string kosong,
+        // maka property $this->unit kita biarkan null.
+        else {
+            $this->unit = null;
+        }
+    }
+
     public function updatedSearch()
     {
         $this->resetPage();
@@ -23,33 +43,30 @@ class PublicAthleteList extends Component
 
     public function render()
     {
-        // Query data
-        $athletes = User::query()
-            ->with('unit') // Eager load relasi unit
-
-            // 1. FILTER ROLE:
-            // Sesuai struktur tabel Anda, kolom role default 'user'.
-            // Jika role untuk atlet bernama 'user', gunakan 'user'.
-            // Jika Anda pakai role bernama 'athlete' di database, ganti jadi 'athlete'.
+        $query = User::query()
+            ->with(['unit', 'level'])
             ->where('role', 'user')
+            ->where('verification_status', 'approved');
 
-            // 2. FILTER STATUS:
-            // Sesuai struktur tabel, nama kolomnya 'verification_status', bukan 'status'.
-            // Dan value untuk yang sudah ACC adalah 'approved'.
-            ->where('verification_status', 'approved')
+        // Pengecekan aman menggunakan optional chaining
+        if ($this->unit && $this->unit->exists) {
+            $query->where('unit_id', $this->unit->id);
+        }
 
-            ->where(function ($query) {
-                // Logic pencarian: Cari berdasarkan Nama ATAU Nama Unit
-                $query->where('name', 'like', '%' . $this->search . '%')
-                    ->orWhereHas('unit', function ($q) {
-                        $q->where('name', 'like', '%' . $this->search . '%');
-                    });
-            })
-            ->orderBy('name', 'asc')
-            ->paginate(12);
+        if ($this->search) {
+            $query->where(function ($q) {
+                $q->where('name', 'like', '%' . $this->search . '%')
+                    ->orWhere('nia', 'like', '%' . $this->search . '%');
+            });
+        }
+
+        $query->orderBy('name');
 
         return view('livewire.public-athlete-list', [
-            'athletes' => $athletes
+            'athletes' => $query->paginate(12),
+            'pageTitle' => ($this->unit && $this->unit->exists)
+                ? 'Anggota Ranting: ' . $this->unit->name
+                : 'Daftar Seluruh Anggota'
         ]);
     }
 }

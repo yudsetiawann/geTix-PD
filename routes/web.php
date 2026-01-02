@@ -1,5 +1,6 @@
 <?php
 
+use App\Livewire\PublicUnitList;
 use App\Livewire\Coach\AthleteList;
 use App\Livewire\PublicAthleteList;
 use Illuminate\Support\Facades\Route;
@@ -25,7 +26,19 @@ Route::get('/', function () {
 
 Route::get('/events', [EventController::class, 'index'])->name('events.index');
 Route::get('/events/{event:slug}', [EventController::class, 'show'])->name('events.show');
-Route::get('/daftar-anggota', PublicAthleteList::class)->name('public.athletes');
+// 1. Halaman Menu Utama
+Route::get('/daftar-anggota', function () {
+    return view('public.member-menu');
+})->name('public.menu');
+// 2. Tampilkan SEMUA Atlet (Route lama dipindah kesini)
+Route::get('/daftar-anggota/semua', PublicAthleteList::class)
+    ->name('public.athletes.all');
+// 3. Tampilkan Daftar Ranting
+Route::get('/daftar-anggota/ranting', PublicUnitList::class)
+    ->name('public.units');
+// 4. Tampilkan Atlet per Ranting (Reuse component yang sama dengan filter)
+Route::get('/daftar-anggota/ranting/{unit}', PublicAthleteList::class)
+    ->name('public.athletes.by-unit');
 Route::get('/struktur-organisasi', PublicOrganizationStructure::class)->name('public.structure');
 
 require __DIR__ . '/auth.php';
