@@ -61,11 +61,11 @@
               @if (Auth::user()?->isCoach())
                 <a href="{{ route('coach.verification') }}"
                   class="{{ request()->routeIs('coach.verification') ? 'text-blue-600 dark:text-blue-400 font-medium' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white' }} rounded-lg px-3 py-2 text-sm transition-colors duration-200">
-                  Verifikasi Atlet
+                  Verifikasi Anggota
                 </a>
                 <a href="{{ route('coach.athletes') }}"
                   class="{{ request()->routeIs('coach.athletes') ? 'text-blue-600 dark:text-blue-400 font-medium' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white' }} rounded-lg px-3 py-2 text-sm transition-colors duration-200">
-                  Data Atlet
+                  Data Anggota
                 </a>
               @endif
             </div>
@@ -95,28 +95,30 @@
             <div class="relative" x-data="{ open: false }">
               <button @click="open = !open"
                 class="flex items-center space-x-2 rounded-full p-1 pr-3 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-200">
-                <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-white">
-                  <span
-                    class="text-sm font-medium leading-none">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</span>
-                </span>
+                <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-white"><span
+                    class="text-sm font-medium leading-none">{{ strtoupper(substr(Auth::user()->display_name, 0, 1)) }}</span></span>
                 <span class="text-sm font-medium text-slate-700 dark:text-slate-200 flex items-center gap-1">
-                  {{ Auth::user()->name }}
-                  @if ($isUserVerified)
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-                      class="size-4 text-blue-500" title="Terverifikasi">
-                      <path fill-rule="evenodd"
-                        d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z"
-                        clip-rule="evenodd" />
-                    </svg>
-                  @endif
-                </span>
-                <svg class="size-4 text-slate-500 dark:text-slate-400 transition-transform duration-200"
-                  :class="{ 'rotate-180': open }" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
-                  fill="currentColor">
-                  <path fill-rule="evenodd"
-                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                    clip-rule="evenodd" />
-                </svg>
+
+
+                  <span class="text-sm font-medium text-slate-700 dark:text-slate-200 flex items-center gap-1">
+
+                    {{ Auth::user()->display_name }}
+                    @if ($isUserVerified)
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                        class="size-4 text-blue-500" title="Terverifikasi">
+                        <path fill-rule="evenodd"
+                          d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z"
+                          clip-rule="evenodd" />
+                      </svg>
+                    @endif
+                  </span>
+                  <svg class="size-4 text-slate-500 dark:text-slate-400 transition-transform duration-200"
+                    :class="{ 'rotate-180': open }" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                    fill="currentColor">
+                    <path fill-rule="evenodd"
+                      d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                      clip-rule="evenodd" />
+                  </svg>
               </button>
 
               {{-- Dropdown Menu --}}
@@ -249,11 +251,11 @@
           @if (Auth::user()->isCoach())
             <a href="{{ route('coach.verification') }}"
               class="{{ request()->routeIs('coach.verification') ? 'bg-blue-50 dark:bg-slate-800 text-blue-600 dark:text-blue-400' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800' }} block rounded-lg px-3 py-2.5 text-base font-medium transition-colors">
-              Verifikasi Atlet
+              Verifikasi Anggota
             </a>
             <a href="{{ route('coach.athletes') }}"
               class="{{ request()->routeIs('coach.athletes') ? 'bg-blue-50 dark:bg-slate-800 text-blue-600 dark:text-blue-400' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800' }} block rounded-lg px-3 py-2.5 text-base font-medium transition-colors">
-              Data Atlet
+              Data Anggota
             </a>
           @endif
         @endauth
