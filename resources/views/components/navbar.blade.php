@@ -26,7 +26,8 @@
     }">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="flex h-18 items-center justify-between">
-        {{-- Logo & Desktop Menu --}}
+
+        {{-- Logo --}}
         <div class="flex items-center">
           <a href="/" class="flex items-center shrink-0 space-x-2.5 group">
             <img src="/img/Logo-PD.png" alt="PD-dig"
@@ -38,27 +39,32 @@
           {{-- Desktop Navigation Links --}}
           <div class="hidden md:ml-10 md:block">
             <div class="flex items-baseline space-x-4">
+              {{-- 1. BERANDA (SELALU MUNCUL) --}}
               <a href="{{ route('home') }}"
                 class="{{ request()->routeIs('home') ? 'text-blue-600 dark:text-blue-400 font-medium' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white' }} rounded-lg px-3 py-2 text-sm transition-colors duration-200">Beranda</a>
 
-              <a href="{{ route('events.index') }}"
-                class="{{ request()->routeIs('events.index') ? 'text-blue-600 dark:text-blue-400 font-medium' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white' }} rounded-lg px-3 py-2 text-sm transition-colors duration-200">Events</a>
+              {{-- 2. MENU TERBATAS (HANYA JIKA VERIFIED) --}}
+              @if ($isUserVerified)
+                <a href="{{ route('events.index') }}"
+                  class="{{ request()->routeIs('events.index') ? 'text-blue-600 dark:text-blue-400 font-medium' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white' }} rounded-lg px-3 py-2 text-sm transition-colors duration-200">Events</a>
 
-              <a href="{{ route('public.menu') }}"
-                class="{{ request()->routeIs('public.menu') || request()->routeIs('public.athletes.all') || request()->routeIs('public.units') ? 'text-blue-600 dark:text-blue-400 font-medium' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white' }} rounded-lg px-3 py-2 text-sm transition-colors duration-200">Daftar
-                Anggota</a>
+                <a href="{{ route('public.menu') }}"
+                  class="{{ request()->routeIs('public.menu') || request()->routeIs('public.athletes.all') || request()->routeIs('public.units') ? 'text-blue-600 dark:text-blue-400 font-medium' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white' }} rounded-lg px-3 py-2 text-sm transition-colors duration-200">Daftar
+                  Anggota</a>
 
-              <a href="{{ route('public.structure') }}"
-                class="{{ request()->routeIs('public.structure') ? 'text-blue-600 dark:text-blue-400 font-medium' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white' }} rounded-lg px-3 py-2 text-sm transition-colors duration-200">Struktur
-                Organisasi</a>
+                <a href="{{ route('public.structure') }}"
+                  class="{{ request()->routeIs('public.structure') ? 'text-blue-600 dark:text-blue-400 font-medium' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white' }} rounded-lg px-3 py-2 text-sm transition-colors duration-200">Struktur
+                  Organisasi</a>
 
-              @auth
-                <a href="{{ route('my-tickets.index') }}"
-                  class="{{ request()->routeIs('my-tickets.index') ? 'text-blue-600 dark:text-blue-400 font-medium' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white' }} rounded-lg px-3 py-2 text-sm transition-colors duration-200">Tiket
-                  Saya</a>
-              @endauth
+                @auth
+                  <a href="{{ route('my-tickets.index') }}"
+                    class="{{ request()->routeIs('my-tickets.index') ? 'text-blue-600 dark:text-blue-400 font-medium' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white' }} rounded-lg px-3 py-2 text-sm transition-colors duration-200">Tiket
+                    Saya</a>
+                @endauth
+              @endif
 
-              @if (Auth::user()?->isCoach())
+              {{-- 3. MENU KHUSUS PELATIH (VERIFIED ONLY) --}}
+              @if (Auth::user()?->isCoach() && $isUserVerified)
                 <a href="{{ route('coach.verification') }}"
                   class="{{ request()->routeIs('coach.verification') ? 'text-blue-600 dark:text-blue-400 font-medium' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white' }} rounded-lg px-3 py-2 text-sm transition-colors duration-200">
                   Verifikasi Anggota
@@ -72,9 +78,8 @@
           </div>
         </div>
 
-        {{-- Desktop Right Side (Dark Mode & User Menu) --}}
+        {{-- Desktop Right Side --}}
         <div class="hidden md:flex md:items-center md:space-x-2">
-          {{-- Dark Mode Toggle --}}
           <button @click="darkMode = !darkMode" type="button"
             class="relative flex items-center rounded-full p-2 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-200">
             <span class="sr-only">Toggle dark mode</span>
@@ -90,7 +95,6 @@
             </svg>
           </button>
 
-          {{-- User Dropdown --}}
           @auth
             <div class="relative" x-data="{ open: false }">
               <button @click="open = !open"
@@ -98,10 +102,7 @@
                 <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-white"><span
                     class="text-sm font-medium leading-none">{{ strtoupper(substr(Auth::user()->display_name, 0, 1)) }}</span></span>
                 <span class="text-sm font-medium text-slate-700 dark:text-slate-200 flex items-center gap-1">
-
-
                   <span class="text-sm font-medium text-slate-700 dark:text-slate-200 flex items-center gap-1">
-
                     {{ Auth::user()->display_name }}
                     @if ($isUserVerified)
                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
@@ -121,11 +122,9 @@
                   </svg>
               </button>
 
-              {{-- Dropdown Menu --}}
               <div x-cloak x-show="open" @click.outside="open = false" x-transition
                 class="absolute right-0 z-50 mt-2 w-56 origin-top-right rounded-xl bg-white dark:bg-slate-800 py-1.5 shadow-lg ring-1 ring-black/5 dark:ring-white/10 focus:outline-none">
 
-                {{-- Admin/Scanner Links --}}
                 @if (Auth::user()->isAdmin())
                   <a href="{{ route('filament.admin.pages.dashboard') }}"
                     class="block px-4 py-2 text-sm font-semibold text-yellow-600 dark:text-yellow-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
@@ -142,22 +141,23 @@
                   <div class="my-1.5 h-px bg-slate-200 dark:bg-slate-700"></div>
                 @endif
 
-                {{-- User Links --}}
                 <a href="{{ route('home') }}"
                   class="block px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">Beranda</a>
-                <a href="{{ route('events.index') }}"
-                  class="block px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">Events</a>
 
-                <a href="{{ route('public.menu') }}"
-                  class="block px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">Daftar
-                  Anggota</a>
-
-                <a href="{{ route('public.structure') }}"
-                  class="block px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">Struktur
-                  Organisasi</a>
-                <a href="{{ route('my-tickets.index') }}"
-                  class="block px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">Tiket
-                  Saya</a>
+                {{-- LINK MENU DI DROPDOWN JUGA DIHIDE JIKA BELUM VERIFIED --}}
+                @if ($isUserVerified)
+                  <a href="{{ route('events.index') }}"
+                    class="block px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">Events</a>
+                  <a href="{{ route('public.menu') }}"
+                    class="block px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">Daftar
+                    Anggota</a>
+                  <a href="{{ route('public.structure') }}"
+                    class="block px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">Struktur
+                    Organisasi</a>
+                  <a href="{{ route('my-tickets.index') }}"
+                    class="block px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">Tiket
+                    Saya</a>
+                @endif
 
                 <div class="my-1.5 h-px bg-slate-200 dark:bg-slate-700"></div>
 
@@ -199,12 +199,6 @@
     </div>
   </nav>
 
-  {{-- Mobile Menu Overlay --}}
-  <div x-cloak x-show="mobileOpen" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
-    x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200"
-    x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" @click="mobileOpen = false"
-    class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm md:hidden"></div>
-
   {{-- Mobile Menu Panel --}}
   <nav x-cloak x-show="mobileOpen" x-transition:enter="transition ease-out duration-300 transform"
     x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0"
@@ -231,34 +225,40 @@
       <nav class="space-y-2">
         <a href="{{ route('home') }}"
           class="{{ request()->routeIs('home') ? 'bg-blue-50 dark:bg-slate-800 text-blue-600 dark:text-blue-400' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800' }} block rounded-lg px-3 py-2.5 text-base font-medium transition-colors">Beranda</a>
-        <a href="{{ route('events.index') }}"
-          class="{{ request()->routeIs('events.index') ? 'bg-blue-50 dark:bg-slate-800 text-blue-600 dark:text-blue-400' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800' }} block rounded-lg px-3 py-2.5 text-base font-medium transition-colors">Events</a>
 
-        <a href="{{ route('public.menu') }}"
-          class="{{ request()->routeIs('public.menu') || request()->routeIs('public.athletes.all') || request()->routeIs('public.units') ? 'bg-blue-50 dark:bg-slate-800 text-blue-600 dark:text-blue-400' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800' }} block rounded-lg px-3 py-2.5 text-base font-medium transition-colors">Daftar
-          Anggota</a>
+        {{-- MOBILE: MENU TERBATAS --}}
+        @if ($isUserVerified)
+          <a href="{{ route('events.index') }}"
+            class="{{ request()->routeIs('events.index') ? 'bg-blue-50 dark:bg-slate-800 text-blue-600 dark:text-blue-400' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800' }} block rounded-lg px-3 py-2.5 text-base font-medium transition-colors">Events</a>
 
-        {{-- NEW: Struktur Organisasi Added for Mobile --}}
-        <a href="{{ route('public.structure') }}"
-          class="{{ request()->routeIs('public.structure') ? 'bg-blue-50 dark:bg-slate-800 text-blue-600 dark:text-blue-400' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800' }} block rounded-lg px-3 py-2.5 text-base font-medium transition-colors">Struktur
-          Organisasi</a>
+          <a href="{{ route('public.menu') }}"
+            class="{{ request()->routeIs('public.menu') || request()->routeIs('public.athletes.all') || request()->routeIs('public.units') ? 'bg-blue-50 dark:bg-slate-800 text-blue-600 dark:text-blue-400' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800' }} block rounded-lg px-3 py-2.5 text-base font-medium transition-colors">Daftar
+            Anggota</a>
 
-        @auth
-          <a href="{{ route('my-tickets.index') }}"
-            class="{{ request()->routeIs('my-tickets.index') ? 'bg-blue-50 dark:bg-slate-800 text-blue-600 dark:text-blue-400' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800' }} block rounded-lg px-3 py-2.5 text-base font-medium transition-colors">Tiket
-            Saya</a>
+          <a href="{{ route('public.structure') }}"
+            class="{{ request()->routeIs('public.structure') ? 'bg-blue-50 dark:bg-slate-800 text-blue-600 dark:text-blue-400' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800' }} block rounded-lg px-3 py-2.5 text-base font-medium transition-colors">Struktur
+            Organisasi</a>
 
-          @if (Auth::user()->isCoach())
-            <a href="{{ route('coach.verification') }}"
-              class="{{ request()->routeIs('coach.verification') ? 'bg-blue-50 dark:bg-slate-800 text-blue-600 dark:text-blue-400' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800' }} block rounded-lg px-3 py-2.5 text-base font-medium transition-colors">
-              Verifikasi Anggota
-            </a>
-            <a href="{{ route('coach.athletes') }}"
-              class="{{ request()->routeIs('coach.athletes') ? 'bg-blue-50 dark:bg-slate-800 text-blue-600 dark:text-blue-400' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800' }} block rounded-lg px-3 py-2.5 text-base font-medium transition-colors">
-              Data Anggota
-            </a>
-          @endif
-        @endauth
+          @auth
+            <a href="{{ route('my-tickets.index') }}"
+              class="{{ request()->routeIs('my-tickets.index') ? 'bg-blue-50 dark:bg-slate-800 text-blue-600 dark:text-blue-400' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800' }} block rounded-lg px-3 py-2.5 text-base font-medium transition-colors">Tiket
+              Saya</a>
+          @endauth
+        @endif
+
+        {{-- MOBILE: MENU PELATIH --}}
+        @if (Auth::user()?->isCoach() && $isUserVerified)
+          <div class="my-2 h-px bg-slate-100 dark:bg-slate-800"></div>
+          <p class="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Menu Pelatih</p>
+          <a href="{{ route('coach.verification') }}"
+            class="{{ request()->routeIs('coach.verification') ? 'bg-blue-50 dark:bg-slate-800 text-blue-600 dark:text-blue-400' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800' }} block rounded-lg px-3 py-2.5 text-base font-medium transition-colors">
+            Verifikasi Anggota
+          </a>
+          <a href="{{ route('coach.athletes') }}"
+            class="{{ request()->routeIs('coach.athletes') ? 'bg-blue-50 dark:bg-slate-800 text-blue-600 dark:text-blue-400' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800' }} block rounded-lg px-3 py-2.5 text-base font-medium transition-colors">
+            Data Anggota
+          </a>
+        @endif
       </nav>
 
       <div class="my-1.5 h-px bg-slate-200 dark:bg-slate-700"></div>
