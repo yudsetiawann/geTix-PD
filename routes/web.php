@@ -10,6 +10,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\WelcomeController;
 use App\Livewire\Coach\AthleteVerification;
 use App\Http\Controllers\MidtransController;
 use App\Livewire\PublicOrganizationStructure;
@@ -21,15 +22,7 @@ use App\Http\Controllers\CertificateController;
 |--------------------------------------------------------------------------
 */
 
-Route::get('/', function () {
-    // Ambil 3 event terbaru yang belum expired untuk ditampilkan di homepage
-    $latestEvents = Event::where('starts_at', '>=', now())
-        ->orderBy('starts_at', 'asc')
-        ->limit(3)
-        ->get();
-
-    return view('welcome', compact('latestEvents'));
-})->name('home');
+Route::get('/', WelcomeController::class)->name('home');
 
 require __DIR__ . '/auth.php';
 
