@@ -13,8 +13,9 @@
           <span class="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">PD-dig</span>
         </div>
         <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed max-w-sm">
-          Platform e-ticketing resmi untuk semua kegiatan Keluarga Silat Nasional Indonesia Perisai Diri.
-          Kami menghadirkan pengalaman pemesanan tiket yang mudah, aman, dan terpercaya.
+          Platform manajemen terpusat untuk KELATNAS Indonesia Perisai Diri Cabang Kabupaten Tasikmalaya.
+          Kami menghadirkan solusi digital untuk pendataan anggota, serta kemudahan akses event yang aman dan
+          terpercaya.
         </p>
       </div>
 
@@ -54,7 +55,7 @@
           Ikuti Kami
         </h3>
         <p class="text-slate-600 dark:text-slate-400 text-sm mb-6">
-          Tetap terhubung untuk mendapatkan info kejuaraan dan event terbaru.
+          Tetap terhubung untuk mendapatkan info seputar KELATNAS Indonesia Perisai Diri Cabang Kabupaten Tasikmalaya.
         </p>
         <div class="flex items-center gap-4">
           {{-- Instagram --}}
