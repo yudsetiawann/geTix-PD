@@ -21,6 +21,7 @@ class PublicUnitList extends Component
                 // Hitung hanya atlet yang APPROVED
                 $query->where('verification_status', 'approved');
             }])
+            ->with('coaches') // (Eager Loading)
             ->when($this->search, function ($q) {
                 $q->where('name', 'like', '%' . $this->search . '%')
                     ->orWhere('address', 'like', '%' . $this->search . '%');
