@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Unit;
-use App\Models\OrganizationPosition; // <--- JANGAN LUPA IMPORT INI
 use Illuminate\View\View;
 use Illuminate\Http\Request;
+use App\Models\OrganizationPosition;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
@@ -19,9 +19,12 @@ class ProfileController extends Controller
         // agar kita bisa cek di view siapa pelatihnya
         $units = Unit::with('coaches')->orderBy('name', 'asc')->get();
 
-        $positions = \App\Models\OrganizationPosition::where('is_active', true)
-            ->orderBy('order_level', 'asc')
-            ->get();
+        // [BARU] Ambil data jabatan dinamis
+        $positions = OrganizationPosition::active()->get();
+
+        // $positions = OrganizationPosition::where('is_active', true)
+        //     ->orderBy('order_level', 'asc')
+        //     ->get();
 
         return view('profile.edit', [
             'user' => $request->user(),
@@ -86,6 +89,12 @@ class ProfileController extends Controller
         }
 
         $user->save();
+
+        // === LOGIKA BARU: UPLOAD FOTO PROFIL ===
+        if ($request->hasFile('photo')) {
+            $user->addMediaFromRequest('photo')
+                ->toMediaCollection('profile_photo');
+        }
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }

@@ -5,19 +5,21 @@ namespace App\Models;
 use Filament\Panel;
 use App\Models\Level;
 use App\Models\UserVerification;
-use App\Models\OrganizationPosition;
+use Spatie\MediaLibrary\HasMedia;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\OrganizationPosition;
 use Illuminate\Notifications\Notifiable;
 use Filament\Models\Contracts\FilamentUser;
+use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 // class User extends Authenticatable implements MustVerifyEmail, FilamentUser
-class User extends Authenticatable implements FilamentUser
+class User extends Authenticatable implements FilamentUser, HasMedia
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, InteractsWithMedia;
 
     /**
      * The attributes that are mass assignable.
@@ -207,5 +209,25 @@ class User extends Authenticatable implements FilamentUser
     public function hasRole($role)
     {
         return $this->role === $role;
+    }
+
+    /**
+     * Konfigurasi Spatie Media Library
+     */
+    public function registerMediaCollections(): void
+    {
+        $this
+            ->addMediaCollection('profile_photo')
+            ->singleFile() // Hapus foto lama otomatis saat upload baru
+            ->useDisk('public'); // Simpan di storage/app/public
+    }
+
+    /**
+     * Helper untuk mendapatkan URL foto profil atau Fallback (Inisial Nama)
+     */
+    public function getProfilePhotoUrlAttribute(): string
+    {
+        return $this->getFirstMediaUrl('profile_photo')
+            ?: 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&color=7F9CF5&background=EBF4FF';
     }
 }

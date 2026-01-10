@@ -35,6 +35,9 @@ class ProfileUpdateRequest extends FormRequest
             'level_id' => ['required', 'exists:levels,id'],
             'join_year' => ['required', 'digits:4', 'integer', 'min:1955', 'max:' . date('Y')],
 
+            // Validasi Foto Profil
+            'photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'], // Max 2MB
+
             'organization_position_id' => [
                 'nullable',
                 'exists:organization_positions,id'

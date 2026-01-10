@@ -26,9 +26,56 @@
     @csrf
   </form>
 
-  <form method="post" action="{{ route('profile.update') }}" class="space-y-6">
+  <form method="post" action="{{ route('profile.update') }}" class="space-y-6" enctype="multipart/form-data">
     @csrf
     @method('patch')
+
+    {{-- FOTO PROFIL DENGAN PREVIEW (Alpine.js)
+        x-data menangani state foto preview --}}
+    <div x-data="{ photoName: null, photoPreview: null }" class="col-span-6 sm:col-span-4">
+
+      <input type="file" id="photo" name="photo" class="hidden" x-ref="photo"
+        x-on:change="
+                        photoName = $refs.photo.files[0].name;
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            photoPreview = e.target.result;
+                        };
+                        reader.readAsDataURL($refs.photo.files[0]);
+                    " />
+
+      <div class="flex items-center gap-6">
+        <div class="relative">
+          <div class="mt-2" x-show="! photoPreview">
+            <img src="{{ $user->profile_photo_url }}" alt="{{ $user->name }}"
+              class="h-24 w-24 rounded-full object-cover ring-4 ring-slate-100 dark:ring-slate-700 shadow-sm">
+          </div>
+
+          <div class="mt-2" x-show="photoPreview" style="display: none;">
+            <span
+              class="block h-24 w-24 rounded-full ring-4 ring-blue-100 dark:ring-blue-900 shadow-sm bg-cover bg-no-repeat bg-center"
+              x-bind:style="'background-image: url(\'' + photoPreview + '\');'">
+            </span>
+          </div>
+        </div>
+
+        <div>
+          <x-secondary-button class="mt-2 mr-2 cursor-pointer" x-on:click.prevent="$refs.photo.click()">
+            {{ __('Pilih Foto Baru') }}
+          </x-secondary-button>
+
+          @if ($user->getFirstMediaUrl('profile_photo'))
+            {{-- Opsi Hapus Foto (Opsional, jika ingin kembali ke inisial) --}}
+            {{-- Anda perlu membuat route delete khusus jika ingin fitur ini --}}
+          @endif
+
+          <x-input-error class="mt-2" :messages="$errors->get('photo')" />
+          <p class="mt-2 text-xs text-slate-500 dark:text-slate-400">
+            JPG, JPEG, PNG, WEBP (Max. 2MB).
+          </p>
+        </div>
+      </div>
+    </div>
 
     {{-- GRID LAYOUT --}}
     <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-2">
@@ -185,24 +232,26 @@
       {{-- LOGIC SPLIT BERDASARKAN ROLE --}}
       @if ($user->isCoach())
         <div class="mt-2">
-          <x-input-label for="organization_position_id" :value="__('Jabatan Struktur Organisasi')" class="text-gray-800 dark:text-gray-200" />
-          {{-- <p class="text-xs text-gray-500 mb-2">Opsional, pilih jika Anda menjabat di pengurus cabang.</p> --}}
+          <x-input-label for="organization_position_id" :value="__('Jabatan Struktur Organisasi')" class="mb-1 text-gray-800 dark:text-gray-200" />
 
           <select id="organization_position_id" name="organization_position_id"
-            class="mt-1 block w-full rounded-lg border-slate-300 shadow-sm dark:border-slate-700 dark:bg-slate-900 dark:text-white">
-            <option value="">-- Tidak Menjabat --</option>
-            {{-- $positions diambil dari Controller edit() --}}
+            class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-600 focus:ring-blue-600 dark:border-slate-700 dark:bg-slate-900 dark:text-white">
+
+            <option value="">Pilih Jabatan (Opsional)</option>
+
+            {{-- Loop data dari database --}}
             @foreach ($positions as $position)
               <option value="{{ $position->id }}"
                 {{ old('organization_position_id', $user->organization_position_id) == $position->id ? 'selected' : '' }}>
                 {{ $position->name }}
               </option>
             @endforeach
+
           </select>
           <x-input-error class="mt-2" :messages="$errors->get('organization_position_id')" />
         </div>
-        {{-- === INPUT KHUSUS PELATIH (MULTI SELECT DROPDOWN - FIXED) === --}}
 
+        {{-- === INPUT KHUSUS PELATIH (MULTI SELECT DROPDOWN - FIXED) === --}}
         {{-- Kita siapkan datanya di PHP dulu agar kodingan HTML di bawah lebih rapi --}}
         @php
           $selectedUnits = old(
