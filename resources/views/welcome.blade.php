@@ -39,7 +39,7 @@
           class="w-full sm:w-auto inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg text-lg shadow-lg hover:shadow-blue-500/40 transform hover:scale-105 transition-all duration-300">
           Lihat Semua Ranting
         </a>
-        <a href="{{ route('public.structure') }}"
+        <a href="{{ route('public.coaches') }}"
           class="w-full sm:w-auto inline-block bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white text-white font-bold py-3 px-8 rounded-lg text-lg shadow-lg hover:shadow-white/20 transform hover:scale-105 transition-all duration-300">
           Daftar Pelatih
         </a>
