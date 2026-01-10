@@ -25,27 +25,43 @@
           Menu
         </h3>
         <ul class="space-y-4">
+
+          {{-- Beranda --}}
           <li>
-            <a href="/"
+            <a href="{{ route('home') }}"
               class="text-sm text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 flex items-center gap-2 group">
               <span class="h-px w-0 bg-blue-600 transition-all duration-300 group-hover:w-3"></span>
               Beranda
             </a>
           </li>
+
+          {{-- Events (Menyesuaikan dengan Grouping Event & Ticket) --}}
           <li>
-            <a href="/events"
+            <a href="{{ route('events.index') }}"
               class="text-sm text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 flex items-center gap-2 group">
               <span class="h-px w-0 bg-blue-600 transition-all duration-300 group-hover:w-3"></span>
-              Semua Event
+              Events
             </a>
           </li>
+
+          {{-- Keanggotaan --}}
           <li>
-            <a href="/my-receipts"
+            <a href="{{ route('public.menu') }}"
               class="text-sm text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 flex items-center gap-2 group">
               <span class="h-px w-0 bg-blue-600 transition-all duration-300 group-hover:w-3"></span>
-              Tiket Saya
+              Keanggotaan
             </a>
           </li>
+
+          {{-- Struktur Organisasi --}}
+          <li>
+            <a href="{{ route('public.structure') }}"
+              class="text-sm text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 flex items-center gap-2 group">
+              <span class="h-px w-0 bg-blue-600 transition-all duration-300 group-hover:w-3"></span>
+              Struktur Organisasi
+            </a>
+          </li>
+
         </ul>
       </div>
 
