@@ -1,104 +1,137 @@
-<!-- Logo di tengah -->
 <p align="center">
 <img src="public/img/Logo-PD.png" alt="Logo Perisai Diri" width="150">
 </p>
-<!-- Judul Utama -->
+
 <h1 align="center">
-geTix PD
+PD-dig (Perisai Diri Digital)
 </h1>
-<!-- Subjudul & Badges -->
+
 <p align="center">
-<strong>Sistem E-Ticketing & Manajemen Event untuk Keluarga Silat Nasional Perisai Diri</strong>
-
-
-Sebuah proyek Pengabdian Kepada Masyarakat (PKM) untuk mentransformasi manajemen event dari manual menjadi digital.
+<strong>Sistem Informasi Manajemen Anggota & Event Terintegrasi<br>Keluarga Silat Nasional Indonesia Perisai Diri Kabupaten Tasikmalaya</strong>
+<br><br>
+<em>"From Paper to Digital Ecosystem"</em> — Transformasi total manajemen organisasi dari pendataan manual menuju ekosistem digital yang terpusat, valid, dan efisien.
 </p>
+
 <p align="center">
-<img src="https://www.google.com/search?q=https://img.shields.io/badge/Laravel-12-FF2D20.svg%3Fstyle%3Dfor-the-badge%26logo%3Dlaravel" alt="Laravel 12">
-<img src="https://www.google.com/search?q=https://img.shields.io/badge/Filament-4-F59E0B.svg%3Fstyle%3Dfor-the-badge" alt="Filament 4">
-<img src="https://www.google.com/search?q=https://img.shields.io/badge/Tailwind_CSS-4-38B2AC.svg%3Fstyle%3Dfor-the-badge%26logo%3Dtailwind-css" alt="Tailwind 4">
-<img src="https://www.google.com/search?q=https://img.shields.io/badge/PHP-8.3%252B-777BB4.svg%3Fstyle%3Dfor-the-badge%26logo%3Dphp" alt="PHP 8.3+">
+<img src="https://img.shields.io/badge/Laravel-12-FF2D20.svg?style=for-the-badge&logo=laravel" alt="Laravel 12">
+<img src="https://img.shields.io/badge/Filament-4-F59E0B.svg?style=for-the-badge" alt="Filament 4">
+<img src="https://img.shields.io/badge/Tailwind_CSS-4-38B2AC.svg?style=for-the-badge&logo=tailwind-css" alt="Tailwind 4">
+<img src="https://img.shields.io/badge/PHP-8.3%2B-777BB4.svg?style=for-the-badge&logo=php" alt="PHP 8.3+">
 </p>
-🎯 Latar Belakang: Masalah Secara tradisional, proses pendaftaran event di Perisai Diri (seperti Ujian Kenaikan Tingkat atau Kejuaraan) seringkali bergantung pada proses manual:
 
-    📝 Pendaftaran: Formulir kertas yang harus diisi dan dikumpulkan.
-    
-    💰 Pembayaran: Pembayaran tunai di sekretariat yang sulit dilacak.
-    
-    📊 Rekap Data: Panitia harus memasukkan ulang data dari kertas ke Excel, rawan human error.
-    
-    🎟️ Tiket & Absensi: Menggunakan daftar hadir cetak atau tiket fisik yang mudah hilang atau dipalsukan.
-    
-    ⏰ Waktu: Proses manual ini memakan waktu dan tenaga panitia yang berharga.
+<hr>
 
-🚀 Solusi: geTix PD
+## 🎯 Latar Belakang & Transformasi
+Sebelumnya, manajemen organisasi menghadapi tantangan data yang terfragmentasi:
+* **Pendataan Anggota:** Data tersebar di kertas formulir atau file Excel terpisah di setiap ranting, menyebabkan duplikasi dan ketidakvalidan data anggota.
+* **Pendaftaran Event:** Peserta harus mengisi formulir berulang kali setiap ada ujian atau kejuaraan.
+* **Validasi:** Sulit memverifikasi status aktif anggota secara *real-time*.
 
-geTix PD adalah aplikasi web lengkap yang mentransformasi seluruh proses ini menjadi satu alur digital yang efisien, aman, dan profesional.
-Untuk Peserta: Pengalaman pendaftaran yang modern, cepat, dan aman dari mana saja.
-Untuk Panitia: Satu "Pusat Kontrol" untuk mengelola semua aspek event, mulai dari penjualan tiket hingga check-in di hari H.
+**PD-dig Hadir Sebagai Solusi:**
+Bukan sekadar aplikasi tiket, melainkan **Platform Manajemen Organisasi (ERP Sederhana)**. Sistem ini menjadikan **Profil Anggota sebagai "Single Source of Truth"**. Data hanya diinput sekali, diverifikasi berjenjang, dan digunakan otomatis untuk pendaftaran event, ujian, hingga penerbitan sertifikat.
 
-✨ Fitur Utama
+---
 
-🎨 Halaman Pengguna (Frontend)
-- Daftar Event: Galeri visual semua event yang akan datang.
-- Detail Event: Halaman lengkap berisi deskripsi, poster, galeri foto, lokasi (embed Google Maps), dan info kontak.
-- Pemesanan Cerdas: Form pemesanan dinamis yang menyesuaikan input dan harga berdasarkan tipe event (misal: Ujian vs. Pertandingan).
-- Gateway Pembayaran: Integrasi penuh dengan Midtrans (GoPay, BCA VA, Mandiri, dll.) untuk pembayaran instan dan aman.
-- Notifikasi Email: Sistem otomatis mengirim e-ticket ke email peserta setelah pembayaran lunas.
-- Halaman "Tiket Saya": Portal bagi pengguna untuk melihat riwayat transaksi, mengunduh ulang tiket, atau membatalkan pesanan yang masih pending.
-- Dark Mode Toggle: Tampilan light/dark mode yang modern dan responsif.
+## 💎 Fitur Unggulan: Manajemen Keanggotaan (Core System)
 
-🛡️ Panel Admin & Scanner (Backend - Filament 4)
-Dibangun menggunakan Filament 4 sebagai panel admin yang tangguh, dengan 3 level akses:
+Sistem ini memiliki *business logic* yang ketat untuk menjamin validitas data anggota.
 
-1. Super Admin (Role: admin)
-    - Dashboard Statistik: Menampilkan total pendapatan, grafik penjualan, dan tiket terjual per event secara real-time (dengan Lazy Loading).
-    - Manajemen Event (CRUD): Membuat, mengedit, dan menghapus event.
-    - Harga Dinamis: Kemampuan untuk mengatur harga tiket statis (harga tunggal) atau harga dinamis berdasarkan dropdown (misal: harga Ujian Kenaikan Tingkat berdasarkan sabuk, atau harga Kejuaraan berdasarkan kategori tanding).
-    - Manajemen Peserta (CRUD): Mengelola database atlet/anggota.
-    - Impor Data: Fitur impor data peserta massal dari file Excel/CSV.
-    - Manajemen User: Mengatur pengguna sistem dan role mereka (admin, scanner, user).
-    - Manajemen Absensi: Mengelola absensi latihan harian atlet (terpisah dari event).
+### 1. Siklus Hidup Verifikasi (Verification Lifecycle)
+Menjamin bahwa hanya anggota yang valid yang tercatat di database.
+* **Incomplete:** User baru mendaftar, data belum lengkap.
+* **Pending:** User melengkapi data profil & memilih Unit Latihan. Data menunggu persetujuan Pelatih.
+* **Approved:** Pelatih memvalidasi bahwa user adalah anggota unitnya. **NIA Terbit Otomatis.**
+* **Rejected:** Data ditolak (wajib menyertakan alasan) untuk diperbaiki user.
 
-2. Panitia Lapangan (Role: scanner)
-    - Hanya bisa mengakses 2 halaman: Dashboard (hanya melihat) dan Halaman Scan E-Ticket.
-    - Akses menu lain (Users, Events, Peserta) disembunyikan.
+### 2. Snapshot Integrity & Locking
+* **Data Consistency:** Jika anggota yang sudah `Approved` mengubah data sensitif (Nama, Tanggal Lahir, Unit), status otomatis reset ke `Pending` untuk diverifikasi ulang.
+* **Pre-filled Forms:** Saat mendaftar event, formulir otomatis terisi dari data profil (Read-Only). Tidak ada lagi kesalahan penulisan nama di sertifikat.
 
-3. User Biasa (Role: user)
-    Tidak bisa mengakses panel admin sama sekali (canAccessPanel = false).
+### 3. Generator Nomor Induk Anggota (NIA) Otomatis
+Format unik yang digenerate sistem saat status *Approved*:
+> Format: `TahunMasuk` + `TglLahir(YYYYMMDD)` + `NoUrut`
+> Contoh: **201904050001**
 
-🎟️ Fitur Inti:
-1. E-Ticket & Sistem Check-In
-Ini adalah jantung dari aplikasi:
-Pembuatan E-Ticket Otomatis: Setelah MidtransController menerima webhook pembayaran paid, sistem otomatis:
-    - Menyimpan ticket_code unik ke database.
-    - Meng-update stok ticket_quota dan ticket_sold di event.
-    - Membuat e-ticket PDF yang didesain khusus (laravel-dompdf).
-    - Menghasilkan QR Code Unik (simple-qrcode) di dalam PDF.
-    - Menyimpan PDF ke storage (spatie/laravel-medialibrary).
+---
 
-2. Sistem Check-In Scanner:
-    - Panitia/Scanner membuka halaman "Scan E-Ticket" di HP atau Laptop.
-    - Menggunakan html5-qrcode untuk memindai QR code dari e-ticket peserta.
-    - Sistem memvalidasi tiket secara real-time:
-        - BERHASIL: Jika tiket valid dan belum check-in.
-        - DUPLIKAT: Jika tiket sudah pernah di-scan.
-        - PENDING: Jika pembayaran tiket belum lunas.
-        - GAGAL: Jika kode tiket tidak ada di database.
-    - Tersedia input manual (fallback) jika kamera gagal memindai.
+## 🚀 Fitur Frontend (Publik & Anggota)
 
+Tampilan antarmuka modern dan responsif untuk anggota dan masyarakat umum.
 
-🛠️ Tumpukan Teknologi
-Backend: Laravel 12, PHP 8.3
-Frontend: Blade, Tailwind CSS 4, Alpine.js
-Panel Admin: Filament 4
-Database: MySQL
-Pembayaran: Midtrans (Snap)
-Fitur Inti:
-- barryvdh/laravel-dompdf (Pembuatan PDF E-Ticket)
-- simplesoftwareio/simple-qrcode (Pembuatan QR Code)
-- spatie/laravel-medialibrary (Manajemen Upload Gambar & PDF)
-- maatwebsite/excel (Impor & Ekspor Data Peserta)
-- aravel/breeze (Autentikasi Blade)
+### 🏠 Beranda (Homepage) & Informasi
+* **Hero Section:** Navigasi cepat ke Direktori Ranting & Pelatih.
+* **Direktori Anggota:** Transparansi data organisasi.
+    * *Daftar Ranting:* Grid interaktif menampilkan unit latihan & jumlah anggota aktif.
+    * *Daftar Pelatih:* Profil pelatih resmi yang terdaftar.
+* **Info Cabang:** Sejarah Perisai Diri & Peta Lokasi Sekretariat (Google Maps Embed).
+* **Event Dashboard:** Menampilkan 3 event terbaru secara dinamis.
 
-Deployment: cPanel/Shared Hosting (dengan konfigurasi filesystems kustom)
+### 👤 Profil & Dashboard Anggota
+* **Manajemen Profil:** Input biodata lengkap (NIK, Pekerjaan, Tingkatan Sabuk, Unit Latihan).
+* **Tiket Saya:** Riwayat transaksi event, status pembayaran, dan unduh E-Ticket.
+* **Proteksi Akses:** Hanya anggota berstatus **Verified/Approved** yang dapat mengakses menu pembelian tiket event.
+
+---
+
+## 🎫 Manajemen Event & Ticketing
+
+Sistem pendaftaran event yang terintegrasi penuh dengan data keanggotaan.
+
+### Pendaftaran Cerdas
+* **Middleware Protection:** Mencegah user *Pending/Rejected* mendaftar event.
+* **Form Dinamis:** Hanya meminta input variabel (misal: Berat Badan untuk kategori tanding), sisanya mengambil dari profil.
+
+### Metode Pembayaran (Flexible Payment)
+1.  **Online (Midtrans Snap):** QRIS, E-Wallet, Virtual Account (Otomatis Lunas).
+2.  **Tunai/Kolektif (New):** Opsi bayar manual ke koordinator cabang. Status tiket `Pending` hingga dikonfirmasi Admin.
+
+### Output Dokumen
+* **E-Ticket PDF:** Dilengkapi QR Code unik untuk validasi kehadiran.
+* **Sertifikat Digital:** Generate otomatis (Front & Back page) lengkap dengan nilai ujian.
+
+---
+
+## 🛡️ Hak Akses & Panel (Role Management)
+
+Sistem membagi akses ke dalam beberapa panel spesifik:
+
+### 1. Panel Admin (Super Admin - Filament v4)
+Pusat kontrol organisasi.
+* **Dashboard Statistik:** Grafik penjualan & ringkasan anggota.
+* **Master Data:** CRUD Unit Latihan & Tingkatan Sabuk (untuk dropdown dinamis).
+* **Manajemen Event:** Atur harga tiket, kuota, dan galeri.
+* **Approval Pembayaran:** Validasi pembayaran tunai/kolektif.
+* **Manajemen User:** Reset password & kelola role.
+
+### 2. Panel Pelatih (Coach Dashboard)
+Didesain khusus untuk pelatih unit/ranting.
+* **Verifikasi Anggota:** Tombol *Approve* (Terbitkan NIA) atau *Reject* untuk pendaftar baru di unit binaannya.
+* **Monitoring Unit:** Melihat daftar seluruh atlet binaan yang aktif.
+
+### 3. Panel Scanner (Event Crew)
+* **QR Validation:** Scan E-Ticket menggunakan kamera HP/Laptop.
+* **Real-time Status:** Deteksi tiket *Valid*, *Pending*, *Expired*, atau *Duplicate* (sudah masuk).
+
+---
+
+## 🛠️ Tumpukan Teknologi (Tech Stack)
+
+Dibangun dengan teknologi modern untuk performa dan skalabilitas jangka panjang.
+
+| Komponen | Teknologi |
+| :--- | :--- |
+| **Framework** | Laravel 12 |
+| **Language** | PHP 8.3 |
+| **Admin Panel** | FilamentPHP v4 |
+| **Frontend** | Blade + Tailwind CSS 4 + Alpine.js |
+| **Database** | MySQL |
+| **Payment Gateway** | Midtrans (Snap) |
+| **PDF Engine** | barryvdh/laravel-dompdf |
+| **QR Engine** | simplesoftwareio/simple-qrcode |
+| **Storage** | Spatie Media Library |
+
+---
+
+<p align="center">
+Dibuat dengan ❤️ untuk kemajuan Perisai Diri Kabupaten Tasikmalaya.
+</p>
