@@ -77,7 +77,7 @@ class AdminPanelProvider extends PanelProvider
                 EventSalesTable::class,
             ])
             ->navigationItems([
-                NavigationItem::make('Halaman User')
+                NavigationItem::make('Halaman Anggota')
                     ->url(fn() => route('home'))
                     ->icon('heroicon-o-arrow-uturn-left')
                     ->group('Navigasi')
