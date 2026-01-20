@@ -6,6 +6,7 @@ use App\Livewire\PublicCoachList;
 use App\Livewire\Coach\AthleteList;
 use App\Livewire\PublicAthleteList;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\NewsController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\TicketController;
@@ -87,6 +88,12 @@ Route::middleware(['auth', 'verified', 'verified_member'])->group(function () {
     // Menu Khusus Coach (Sudah dilindungi verified_member, jadi aman)
     Route::get('/coach/verification', AthleteVerification::class)->name('coach.verification');
     Route::get('/coach/athletes', AthleteList::class)->name('coach.athletes');
+
+    // News
+    Route::prefix('news')->name('news.')->group(function () {
+        Route::get('/', [NewsController::class, 'index'])->name('index');
+        Route::get('/{post:slug}', [NewsController::class, 'show'])->name('show');
+    });
 });
 
 /*
